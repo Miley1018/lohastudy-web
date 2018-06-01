@@ -21,8 +21,8 @@ class HomePage extends React.Component{
                                         <br />
                                         <p>Hey you, welcome！</p>
                                         <p>We put forth every effort to create a great experience for our users.</p>
-                                        <p><a className="btn btn-lg btn-outline-success" style={{backgroundColor:'white'}} href="#translate" role="button">Get
-                                            started</a></p>
+                                      <br />
+                                      <br />
                                     </div>
                                 </div>
                             </div>
@@ -33,8 +33,8 @@ class HomePage extends React.Component{
                                         <br />
                                         <p>Users will base their decisions on the work in your job.</p>
                                         <p>Build your career at Lohastudy.</p>
-                                        <p><a className="btn btn-lg btn-outline-success" style={{backgroundColor:'white'}} href="#translate" role="button">Get
-                                            started</a></p>
+                                      <br />
+                                      <br />
                                     </div>
                                 </div>
                             </div>

@@ -30,29 +30,33 @@ body {
 }
 .-btn {
     background-color: #28b674 !important;
-    color: white!important;
+    color: white !important;
 }
-.bigColumn {
-    flex: 11 0 0 !important;
-    text-align: left;
+.columnCell {
+    text-align: center;
     cursor: pointer !important;
     white-space:pre-wrap !important;
     word-break: break-all;
+    border: hidden !important;
 }
-.smallColumn {
-    flex: 1 0 0 !important;
-    cursor: pointer !important;
+.tenPer {
+    width:10% !important;
 }
-.bigColumn_header {
-    flex: 11 0 0 !important;
+.twentyPer {
+    width:20% !important;
 }
-.smallColumn_header {
-    flex: 1 0 0 !important;
+.thirtyPer {
+    width:30% !important;
 }
 .ReactTable .rt-thead {
     overflow-y: scroll;
 }
-
+hr.style-two {
+    height: 12px;
+    border: 0;
+    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
+    margin: 15px 15px 15px 15px;
+}
 .defaultMargin {
     margin: 0 30px 0px 30px;
 }

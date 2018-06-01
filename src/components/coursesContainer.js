@@ -6,26 +6,43 @@ import "react-table/react-table.css";
 import Footer from './footer'
 import Header from './header'
 
-import makeProjectItems from './makeProjectItems.js'
-import {fetchProjects} from '../actions/projects'
+import makeCoursesItems from './makeCoursesItems.js'
+import {fetchCourses} from '../actions/courses'
 
 const columns = [
-  {   Header: "Project Name",
-    accessor: "projectName",
-    className: 'bigColumn',
-    headerClassName: 'bigColumn_header'
-  },
-  {   Header: "Past Days",
-    accessor: "createTime",
-    className: 'smallColumn',
-    minWidth: 30,
-    headerClassName: 'smallColumn_header'
-  },
-  {   Header: "Project Id",
+  {   Header: "ID",
     accessor: "id",
-    className: 'smallColumn',
-    minWidth: 30,
-    headerClassName: 'smallColumn_header'
+    className: 'columnCell tenPer',
+    headerClassName: 'columnCell tenPer'
+  },
+  {   Header: "名称",
+    accessor: "name",
+    className: 'columnCell twentyPer',
+    headerClassName: 'columnCell twentyPer'
+  },
+  {   Header: "品类",
+    accessor: "belong",
+    className: 'columnCell twentyPer',
+    headerClassName: 'columnCell twentyPer'
+  },
+  {   Header: "头图",
+    accessor: "pic",
+    className: 'columnCell thirtyPer',
+    headerClassName: 'columnCell thirtyPer',
+    Cell: row => (
+      <img alt='course_pic' src={row.pic}/>
+    )
+  },
+  {   Header: "操作",
+    accessor: "operation",
+    className: 'columnCell twentyPer',
+    headerClassName: 'columnCell twentyPer',
+    Cell: row => {
+      return (<div>
+        <button className='btn btn-outline-success my-2 mx-2 my-sm-0'>编辑</button>
+        <button className='btn btn-outline-success my-2 mx-2 my-sm-0'>删除</button>
+      </div>)
+    }
   }
 ]
 
@@ -41,13 +58,18 @@ class CoursesContainer extends React.Component {
       this.props.history.push('/signin')
       return
     }
-    this.props.fetchProjects().then(()=>{
+    this.props.fetchCourses().then(()=>{
+      console.log(this.props.courses)
       this.setState({
-        tableData: makeProjectItems(this.props.projects)
+        tableData: makeCoursesItems(this.props.courses)
       })
     })
   }
+  addNew() {
+    this.props.history.push('/courses/add')
+  }
   render() {
+    console.log(this.props.courses)
     if (!this.props.authenticated) {
       return <div></div>
     }
@@ -56,14 +78,10 @@ class CoursesContainer extends React.Component {
       <div className='pageWrap'>
         <Header />
         <div className='flexGrow'>
+          <h3 style={{textAlign: 'left', margin: '15px 15px'}}>课程管理</h3>
+          <hr className="style-two" />
+          <div className='d-flex ' style={{marginLeft:'15px', marginBottom:'30px'}}><button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button></div>
           <ReactTable
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: (e, handleOriginal) => {
-                  if (rowInfo) {
-                    this.props.history.push('/projectDetails/' + rowInfo.original.id)
-                  }
-                }}}}
             data={this.state.tableData}
             columns={columns}
             defaultPageSize={15}
@@ -71,7 +89,8 @@ class CoursesContainer extends React.Component {
             className="-highlight defaultMargin"
             style={{
               height: height,
-              margin:'15px 15px'
+              margin:'15px 15px',
+              border:'hidden'
             }}
           />
         </div>
@@ -83,9 +102,9 @@ class CoursesContainer extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    projects: state.projects.toList(),
+    courses: state.courses.courses,
     authenticated: state.auth.authenticated
   }
 }
 
-export default connect(mapStateToProps, {fetchProjects})(CoursesContainer)
+export default connect(mapStateToProps, {fetchCourses})(CoursesContainer)

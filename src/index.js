@@ -34,6 +34,7 @@ import CategoriesContainer from './components/categoriesContainer.js'
 import TagsContainer from './components/tagsContainer.js'
 import CoursesContainer from './components/coursesContainer.js'
 import UsersContainer from './components/usersContainer.js'
+import Courses_add from './components/courses_add.js'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(persistedReducer, /* preloadedState, */ composeEnhancers(applyMiddleware(reduxThunk)))
@@ -49,7 +50,8 @@ ReactDOM.render(
                 <Route path='/orders' component={OrdersContainer} />
                 <Route path='/categories' component={CategoriesContainer} />
                 <Route path='/tags' component={TagsContainer} />
-                <Route path='/courses' component={CoursesContainer} />
+                <Route exact path='/courses' component={CoursesContainer} />
+                <Route path='/courses/add' component={Courses_add} />
                 <Route path='/users' component={UsersContainer} />
             </div>
         </Router>
