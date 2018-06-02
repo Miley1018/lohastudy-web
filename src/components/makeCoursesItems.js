@@ -20,6 +20,5 @@ export default function makeCoursesItems(courses) {
   for (let key in courses) {
     coursesRows.push(courseConstructor(courses[key]))
   }
-  console.log('www',coursesRows)
   return coursesRows
 }

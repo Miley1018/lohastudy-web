@@ -17,7 +17,12 @@ body {
     flex-direction: column;
     margin: 15px 0px 0px 0px;
 }
-
+.mainBody {
+    margin: 25px;
+}
+.mainBody_form {
+    margin-left: 25px;
+}
 .navButton{
     margin-right: 15px;
 }
@@ -25,8 +30,24 @@ body {
 .flexGrow {
     flex-grow: 1;
 }
+.form_label {
+    font-weight: bold;
+}
 .rt-noData {
     display: none !important
+}
+.margin_l_0 {
+    margin-left: 0 !important;
+}
+#allmap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin:0;
+}
+.wrap {
+    white-space:pre-wrap !important;
+    word-break: break-all;
 }
 .-btn {
     background-color: #28b674 !important;

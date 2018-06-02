@@ -30,7 +30,7 @@ const columns = [
     className: 'columnCell thirtyPer',
     headerClassName: 'columnCell thirtyPer',
     Cell: row => (
-      <img alt='course_pic' src={row.pic}/>
+      <img alt='course_pic' src={row.row.pic}/>
     )
   },
   {   Header: "操作",
@@ -75,12 +75,12 @@ class CoursesContainer extends React.Component {
     }
     let height = screen.height * 0.77 + 'px'
     return (
-      <div className='pageWrap'>
+      <div className='pageWrap' >
         <Header />
         <div className='flexGrow'>
-          <h3 style={{textAlign: 'left', margin: '15px 15px'}}>课程管理</h3>
+          <h3 style={{textAlign: 'left', margin: '15px 25px'}}>课程管理</h3>
           <hr className="style-two" />
-          <div className='d-flex ' style={{marginLeft:'15px', marginBottom:'30px'}}><button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button></div>
+          <div className='d-flex ' style={{marginLeft:'25px', marginBottom:'30px'}}><button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button></div>
           <ReactTable
             data={this.state.tableData}
             columns={columns}
