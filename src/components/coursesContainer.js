@@ -69,7 +69,6 @@ class CoursesContainer extends React.Component {
     this.props.history.push('/courses/add')
   }
   render() {
-    console.log(this.props.courses)
     if (!this.props.authenticated) {
       return <div></div>
     }

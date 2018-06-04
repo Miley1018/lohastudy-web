@@ -1,7 +1,11 @@
-import {FETCH_COURSES} from '../actions/types';
+import {FETCH_COURSES, FETCH_COURSE_TAGS} from '../actions/types';
 import _ from 'lodash'
 
-export default function (state = {}, action) {
+let initState = {
+  courses: {},
+  tags: {}
+}
+export default function (state = initState, action) {
   switch (action.type) {
     case FETCH_COURSES:
       return {
@@ -10,6 +14,15 @@ export default function (state = {}, action) {
           ...state.courses,
           ..._.keyBy(action.payload.courses, 'id')
         }
+      }
+    case FETCH_COURSE_TAGS:
+      let tags = {}
+      action.payload.courseTags && action.payload.courseTags.forEach((tag) => {
+        tags[tag.id] = tag
+      })
+      return {
+        ...state,
+        tags: tags
       }
   }
   return state;

@@ -33,12 +33,27 @@ body {
 .form_label {
     font-weight: bold;
 }
+
+#hide input[type=file] {
+    display:none;
+}
+#hide label{
+    display:inline-block;
+    margin: 0;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    width: 150px;
+    background-color: transparent;
+    border:solid 1px rgb(90, 90, 90);
+    border-radius: .25rem;
+    color:rgb(90, 90, 90);
+}
+
 .rt-noData {
     display: none !important
 }
-.margin_l_0 {
-    margin-left: 0 !important;
-}
+
 #allmap {
     width: 100%;
     height: 100%;

@@ -21,6 +21,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "cors": "^2.8.4",
+    "cos-js-sdk-v5": "^0.4.7",
     "css-loader": "^0.28.7",
     "express": "^4.15.4",
     "express-graphql": "^0.6.11",

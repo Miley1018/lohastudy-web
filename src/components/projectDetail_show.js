@@ -5,7 +5,7 @@ import {fetchProjects, postTranslateProject} from '../actions/projects'
 
 import Footer from './footer'
 import Header from './header'
-import Upload from './upload'
+import Upload from '../utils/upload'
 
 const setFilter = ['projectName', 'projectInformation', 'otherDetail'];
 
