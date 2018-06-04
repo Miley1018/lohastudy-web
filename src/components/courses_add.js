@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {createCourse,fetchCourseTags} from '../actions/courses';
+import {createCourse,fetchCourseTags, addCourse} from '../actions/courses';
 import Footer from './footer'
 import Header from './header'
 import cos from '../utils/upload'
@@ -23,7 +23,7 @@ class Courses_add extends Component {
       lng: null,
       lat: null,
       note:'',
-      displayValidateMessage_tags: 'none'
+      displayValidateMessage_tags: 'none',
     }
   }
   componentWillMount() {
@@ -105,7 +105,7 @@ class Courses_add extends Component {
     for (let i = 0; i < this.state.categoryIds.length; i ++) {
       tagsSelectionList.push(
         <div className='d-flex' key={i}>
-          <select id="tagsSelect" className="form-control mt-2"
+          <select id="tagsSelect" className="form-control col-sm-8 mt-2"
                   name={i}
                   onChange={this.onSelectChange.bind(this)}
                   style={{textAlignLast: 'center'}}>
@@ -281,12 +281,12 @@ class Courses_add extends Component {
   }
 
   auto_grow(element) {
-    let row = ((element.target.id === 'courseInfo'
-      || element.target.id === 'courseContains'
-      || element.target.id === 'otherInfo')
-      ? 84 : 38)
-    element.target.style.height = 'auto';
-    element.target.style.height = (element.target.scrollHeight > row ? element.target.scrollHeight : row) + "px";
+    // let row = ((element.target.id === 'courseInfo'
+    //   || element.target.id === 'courseContains'
+    //   || element.target.id === 'otherInfo')
+    //   ? 84 : 38)
+    // element.target.style.height = 'auto';
+    // element.target.style.height = (element.target.scrollHeight > row ? element.target.scrollHeight : row) + "px";
   }
   onImagesChange(e) {
     if (e.target.files) {
@@ -302,16 +302,31 @@ class Courses_add extends Component {
   }
   onSubmitAddCourse(e) {
     e.preventDefault()
-    var tags = document.getElementById("tags");
-    console.log(tags)
-    console.log(this.state.tagIds.length)
-    console.log(this.state.tagIds.length[0] == '')
-    if (this.state.tagIds.length == 0 || (this.state.tagIds.length == 1 && this.state.tagIds.length[0] == '')) {
-      tags.setCustomValidity("I expect an e-mail, darling!");
-    } else {
-      tags.setCustomValidity("");
+    if (this.state.mapSearchCity == '' || this.state.mapSearchAfterCity == '') {
+      alert('请输入课程地址。')
     }
-    // this.props.addCourse([],this.state.title, )
+    let hasTag = true
+    this.state.tagIds.forEach((id) => {
+      if (id == '') {
+        hasTag = false
+      }
+    })
+    if (this.state.tagIds.length === 0 || hasTag == false) {
+      alert('请至少选择一个二级品类。')
+    }
+
+    let hasImage = true
+    this.state.images.forEach((image) => {
+      if (image == '') {
+        hasImage = false
+      }
+    })
+    if (this.state.images.length === 0 || hasImage == false) {
+      alert('请至少添加一张图片。')
+    }
+    this.props.addCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
+      this.state.content,this.state.courseContains,this.state.mapSearchCity + this.state.mapSearchAfterCity, this.state.lng, this.state.lat,
+      this.state.note,this.state.price)
   }
   renderImages() {
     let imagesRenderList = []
@@ -351,7 +366,7 @@ class Courses_add extends Component {
                 <div className='col-sm-5 d-flex'>
                   <input className="form-control col-sm-10"
                          name='title'
-                         onClick={this.onValueChange.bind(this)}
+                         onChange={this.onValueChange.bind(this)}
                          maxLength='20'
                          required
                          autoFocus/>
@@ -391,12 +406,12 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>商圈</label>
-                <div className='col-sm-5'><input className="form-control" required/></div>
+                <div className='col-sm-5'><input className="form-control" onChange={this.onValueChange.bind(this)} name="place" required/></div>
               </div>
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程时长</label>
-                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10"/>
+                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" name='duration' onChange={this.onValueChange.bind(this)} />
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>小时</div>
                   </div>
@@ -405,7 +420,7 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程单价</label>
-                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" required/>
+                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" name='price' onChange={this.onValueChange.bind(this)} required/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>元</div>
                   </div>
@@ -415,7 +430,7 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程内容</label>
                 <div className='col-sm-5'>
-                  <textarea className="form-control" id='courseInfo'/>
+                  <textarea className="form-control" id='courseInfo' name='content' onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
 
@@ -464,7 +479,7 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>备注</label>
                 <div className='col-sm-5'>
-                  <textarea className="form-control" id='otherInfo'/>
+                  <textarea className="form-control" id='otherInfo' name='note' onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
               <button type='submit' >Submit</button>
@@ -483,5 +498,5 @@ function mapStateToProps(state) {
     tags: state.courses.tags
   }
 }
-export default connect(mapStateToProps,{createCourse, fetchCourseTags})(Courses_add)
+export default connect(mapStateToProps,{createCourse, fetchCourseTags, addCourse})(Courses_add)
 

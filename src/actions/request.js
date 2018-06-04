@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 let host = 'https://lohastudy.com/dev/api'
-export function requestWithToken(url, content, method) {
+export function requestWithToken(url, method, content) {
     return axios(
         {
             url: host + url,
@@ -11,9 +11,9 @@ export function requestWithToken(url, content, method) {
             data: content
         }
     ).then().catch(error => {
-        // if (error.response.status === 401) {
-        //     location.href = '/signin'
-        // }
+        if (error.response.status === 401) {
+            location.href = '/signin'
+        }
         console.log(error)
     })
 }

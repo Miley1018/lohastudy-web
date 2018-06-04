@@ -1,5 +1,5 @@
 import {FETCH_COURSES, POST_COURSE, FETCH_COURSE_TAGS} from './types';
-import {request} from "./request.js";
+import {request,requestWithToken} from "./request.js";
 
 export function fetchCourses() {
   return (dispatch) => {
@@ -35,6 +35,26 @@ export function fetchCourseTags() {
           type: FETCH_COURSE_TAGS,
           payload: response.data
         })
+      })
+  }
+}
+
+export function addCourse(images,title, categories,tags,place,duration,
+  content,items,address, lng, lat,
+  note,price) {
+  return (dispatch) => {
+    console.log('lng',lng,lat)
+    return requestWithToken('/courses', 'POST', {course: {
+      images,title, categories,tags,place,duration,
+      content,items,address, location:{type:'Point',coordinates:[lng, lat]},
+      note,price}
+    })
+      .then((response) => {
+        console.log(2,response)
+        // dispatch({
+        //   type: FETCH_COURSE_TAGS,
+        //   payload: response.data
+        // })
       })
   }
 }
