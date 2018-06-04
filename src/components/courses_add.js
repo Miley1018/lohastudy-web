@@ -22,8 +22,7 @@ class Courses_add extends Component {
       mapSearchAfterCity: '',
       lng: null,
       lat: null,
-      note:'',
-      displayValidateMessage_tags: 'none',
+      note:''
     }
   }
   componentWillMount() {
@@ -247,13 +246,27 @@ class Courses_add extends Component {
         var marker =new BMap.Marker(point);
         map.addOverlay(marker);
         marker.enableDragging();
-        console.log(point)
+        console.log('search',point)
+        let lngLat = this.bd09_To_Gcj02(point.lng, point.lat)
+        let lngGcj02 = lngLat['tempLon']
+        let latGcj02 = lngLat['tempLat']
+        console.log('search',lngGcj02,latGcj02)
+        geoc.getLocation(point, (rs) => {
+          var addComp = rs.addressComponents;
+          this.setState({
+            mapSearchCity: addComp.province + ", " + addComp.city,
+            mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+            lng: lngGcj02,
+            lat: latGcj02
+          })
+        })
+
         marker.addEventListener("dragend", (e) => {
             var pt = e.point;
           let lngLat = this.bd09_To_Gcj02(pt.lng, pt.lat)
           let lngGcj02 = lngLat['tempLon']
           let latGcj02 = lngLat['tempLat']
-            geoc.getLocation(pt, (rs) => {
+          geoc.getLocation(pt, (rs) => {
               var addComp = rs.addressComponents;
               this.setState({
                 mapSearchCity: addComp.province + ", " + addComp.city,
@@ -302,8 +315,16 @@ class Courses_add extends Component {
   }
   onSubmitAddCourse(e) {
     e.preventDefault()
+    if (e.target.name === 'mapSearchSubmit') {
+      return
+    }
     if (this.state.mapSearchCity == '' || this.state.mapSearchAfterCity == '') {
       alert('请输入课程地址。')
+      return
+    }
+    if (this.state.lng == null || this.state.lat == null) {
+      alert('请点击搜索按钮，或在地图上标注课程地址，以确认您输入的地址有效。')
+      return
     }
     let hasTag = true
     this.state.tagIds.forEach((id) => {
@@ -313,6 +334,7 @@ class Courses_add extends Component {
     })
     if (this.state.tagIds.length === 0 || hasTag == false) {
       alert('请至少选择一个二级品类。')
+      return
     }
 
     let hasImage = true
@@ -323,6 +345,7 @@ class Courses_add extends Component {
     })
     if (this.state.images.length === 0 || hasImage == false) {
       alert('请至少添加一张图片。')
+      return
     }
     this.props.addCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
       this.state.content,this.state.courseContains,this.state.mapSearchCity + this.state.mapSearchAfterCity, this.state.lng, this.state.lat,
@@ -353,6 +376,9 @@ class Courses_add extends Component {
     }, () => console.log(1, this.state))
   }
   render() {
+    if (!this.props.authenticated) {
+      return <div></div>
+    }
     return (
       <div className='pageWrap'>
         <Header/>
@@ -360,7 +386,7 @@ class Courses_add extends Component {
           <h3 style={{textAlign: 'left', margin: '15px 25px'}}>新增课程</h3>
           <hr className="style-two"/>
           <div className='mainBody'>
-            <form className='mainBody_form' onSubmit={this.onSubmitAddCourse.bind(this)}>
+            <form name='formSubmit' className='mainBody_form' onSubmit={this.onSubmitAddCourse.bind(this)}>
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>名称</label>
                 <div className='col-sm-5 d-flex'>
@@ -385,7 +411,6 @@ class Courses_add extends Component {
                           type="button"
                           style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}>添加品类
                   </button>
-                  <input id='tags' style={{display:this.state.displayValidateMessage_tags}}></input>
                 </div>
               </div>
 
@@ -406,12 +431,14 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>商圈</label>
-                <div className='col-sm-5'><input className="form-control" onChange={this.onValueChange.bind(this)} name="place" required/></div>
+                <div className='col-sm-5'><input className="form-control" onChange={this.onValueChange.bind(this)}
+                                                 name="place" required/></div>
               </div>
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程时长</label>
-                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" name='duration' onChange={this.onValueChange.bind(this)} />
+                <div className='col-sm-2 d-flex'><input className="form-control col-sm-10" name='duration' type="number"
+                                                        step="any" onChange={this.onValueChange.bind(this)}/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>小时</div>
                   </div>
@@ -420,7 +447,8 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程单价</label>
-                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" name='price' onChange={this.onValueChange.bind(this)} required/>
+                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" name='price' type="number"
+                                                        step="any" onChange={this.onValueChange.bind(this)} required/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>元</div>
                   </div>
@@ -430,7 +458,8 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程内容</label>
                 <div className='col-sm-5'>
-                  <textarea className="form-control" id='courseInfo' name='content' onChange={this.onValueChange.bind(this)}/>
+                  <textarea className="form-control" id='courseInfo' name='content'
+                            onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
 
@@ -451,7 +480,7 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程地点</label>
                 <div className='col-sm-5'>
-                  <form onSubmit={this.onMapSearch.bind(this)}>
+                  <form name='mapSearchSubmit' onSubmit={this.onMapSearch.bind(this)}>
                     <input className="form-control wrap" value={this.state.mapSearchCity}
                            onChange={this.onValueChange.bind(this)}
                            name='mapSearchCity'
@@ -466,9 +495,9 @@ class Courses_add extends Component {
                            placeholder='请输入详细地址，不用包含城市名'
                            required/>
                     <div className='d-flex'>
-                    <button type='submit' className="btn btn-outline-dark my-2 mx-0 my-sm-2"
-                            style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}>搜索该地址
-                    </button>
+                      <button type='submit' className="btn btn-outline-dark my-2 mx-0 my-sm-2"
+                              style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}>搜索该地址
+                      </button>
                     </div>
                   </form>
                   <div id="allmap" style={{height: '400px'}}>
@@ -479,11 +508,22 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>备注</label>
                 <div className='col-sm-5'>
-                  <textarea className="form-control" id='otherInfo' name='note' onChange={this.onValueChange.bind(this)}/>
+                  <textarea className="form-control" id='otherInfo' name='note'
+                            onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
-              <button type='submit' >Submit</button>
-              <button onClick={() => this.props.history.push('/courses')}>Cancel</button>
+
+              <div className='form-group row'>
+                <label className='form_label col-sm-2 col-form-label'> </label>
+                <div className='col-sm-5'>
+                  <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}} type='submit'
+                          name='formSubmit'>Submit
+                  </button>
+                  <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}}
+                          onClick={() => this.props.history.push('/courses')}>Cancel
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         </div>
@@ -495,6 +535,7 @@ class Courses_add extends Component {
 
 function mapStateToProps(state) {
   return {
+    authenticated: state.auth.authenticated,
     tags: state.courses.tags
   }
 }
