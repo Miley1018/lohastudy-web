@@ -415,7 +415,7 @@ class Courses_add extends Component {
     for (let i = 0; i < this.state.images.length; i ++) {
       imagesRenderList.push(
         <div key={i} className='mt-2 ml-0' >
-        <img style={{width: '500px'}} src={this.state.images[i]}/>
+        <img style={{width: '500px'}} src={this.state.images[i]} accept="image/*"/>
         <button
           onClick={this.deleteOneImage.bind(this, i)}
           className="btn btn-outline-dark my-2 mx-3 my-sm-2"

@@ -8,7 +8,5 @@ export const POST_TRANSLATED_MESSAGE='post_translated_message';
 export const FETCH_COURSES='fetch_courses';
 export const FETCH_COURSE_TAGS='FETCH_COURSE_TAGS';
 export const FETCH_COURSE='FETCH_COURSE';
-export const POST_COURSE='post_course';
-export const POST_TRANSLATED_PROJECT='post_translated_project';
 
-export const FETCH_PORTFOLIOS='fetch_portfolios';
+export const FETCH_CATEGORIES='FETCH_CATEGORIES';
