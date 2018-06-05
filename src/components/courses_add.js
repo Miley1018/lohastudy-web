@@ -318,14 +318,7 @@ class Courses_add extends Component {
     if (e.target.name === 'mapSearchSubmit') {
       return
     }
-    if (this.state.mapSearchCity == '' || this.state.mapSearchAfterCity == '') {
-      alert('请输入课程地址。')
-      return
-    }
-    if (this.state.lng == null || this.state.lat == null) {
-      alert('请点击搜索按钮，或在地图上标注课程地址，以确认您输入的地址有效。')
-      return
-    }
+
     let hasTag = true
     this.state.tagIds.forEach((id) => {
       if (id == '') {
@@ -347,6 +340,28 @@ class Courses_add extends Component {
       alert('请至少添加一张图片。')
       return
     }
+
+    if (this.state.mapSearchCity == '' || this.state.mapSearchAfterCity == '') {
+      alert('请输入课程地址。')
+      return
+    }
+    if (this.state.lng == null || this.state.lat == null) {
+      alert('请点击搜索按钮，或在地图上标注课程地址，以确认您输入的地址有效。')
+      return
+    }
+    if (this.state.title.trim().length == 0
+    || this.state.content.trim().length == 0
+     || this.state.note.trim().length == 0) {
+      alert('请勿在任何输入框内输入完全空的内容。')
+      return
+    }
+
+    this.state.courseContains.forEach(courseContainsItem => {
+      if (courseContainsItem.trim().length == 0) {
+        alert('请勿在任何输入框内输入完全空的内容。')
+        return
+      }
+    })
     this.props.addCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
       this.state.content,this.state.courseContains,this.state.mapSearchCity + this.state.mapSearchAfterCity, this.state.lng, this.state.lat,
       this.state.note,this.state.price)
@@ -356,7 +371,7 @@ class Courses_add extends Component {
     for (let i = 0; i < this.state.images.length; i ++) {
       imagesRenderList.push(
         <div key={i} className='mt-2 ml-0' >
-        <img style={{height: '200px'}} src={'http://' + this.state.images[i]}/>
+        <img style={{width: '500px'}} src={'http://' + this.state.images[i]}/>
         <button
           onClick={this.deleteOneImage.bind(this, i)}
           className="btn btn-outline-dark my-2 mx-3 my-sm-2"
@@ -424,8 +439,8 @@ class Courses_add extends Component {
                              onChange={this.onImagesChange.bind(this)}
                              multiple/>
                     </label>
+                    <div>{this.renderImages()}</div>
                   </div>
-                  <div>{this.renderImages()}</div>
                 </div>
               </div>
 
