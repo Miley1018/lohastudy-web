@@ -1,4 +1,4 @@
-import {FETCH_COURSES, FETCH_COURSE_TAGS} from '../actions/types';
+import {FETCH_COURSES, FETCH_COURSE_TAGS, FETCH_COURSE} from '../actions/types';
 import _ from 'lodash'
 
 let initState = {
@@ -8,6 +8,7 @@ let initState = {
 export default function (state = initState, action) {
   switch (action.type) {
     case FETCH_COURSES:
+      state = initState
       return {
         ...state,
         courses: {
@@ -23,6 +24,11 @@ export default function (state = initState, action) {
       return {
         ...state,
         tags: tags
+      }
+    case FETCH_COURSE:
+      return {
+        ...state,
+        course: action.payload.course
       }
   }
   return state;

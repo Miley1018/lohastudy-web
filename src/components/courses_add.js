@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {createCourse,fetchCourseTags, addCourse} from '../actions/courses';
+import {editCourse,fetchCourseTags, addCourse, fetchCourse} from '../actions/courses';
 import Footer from './footer'
 import Header from './header'
 import cos from '../utils/upload'
@@ -22,11 +22,16 @@ class Courses_add extends Component {
       mapSearchAfterCity: '',
       lng: null,
       lat: null,
-      note:''
+      note:null,
+      mapHasAuto: false,
+      mapSearchCity_mapAuto: '',
+      mapSearchAfterCity_mapAuto: '',
+      edit: false
     }
   }
   componentWillMount() {
     this.props.fetchCourseTags()
+    this.props.match.params.id &&  this.props.fetchCourse(this.props.match.params.id)
   }
   componentDidMount() {
     let BMap = window.BMap
@@ -77,7 +82,32 @@ class Courses_add extends Component {
       })
     })
   }
-
+  componentWillReceiveProps(nextProps) {
+    nextProps.course &&
+    this.setState({
+      title: nextProps.course.title,
+      categoryIds: nextProps.course.categories.map(category => category.id),
+      tagIds: nextProps.course.tags.map(tag => tag.id),
+      images:nextProps.course.images,
+      place: nextProps.course.place,
+      price:nextProps.course.price,
+      duration: nextProps.course.duration,
+      content: nextProps.course.content,
+      courseContains: nextProps.course.items,
+      mapSearchCity: nextProps.course.concreteAddress && nextProps.course.concreteAddress.city,
+      mapSearchAfterCity: nextProps.course.concreteAddress && nextProps.course.concreteAddress.detail,
+      lng: nextProps.course.location.coordinates.lng,
+      lat: nextProps.course.location.coordinates.lat,
+      note:nextProps.course.note,
+      edit: true
+    }, () => {
+      if ((nextProps.course.concreteAddress && nextProps.course.concreteAddress.city)
+        && (nextProps.course.concreteAddress && nextProps.course.concreteAddress.detail)) {
+        this.onMapSearch()
+      }
+      console.log('init',this.state)
+    })
+  }
   addTagsSelection(e) {
     e.preventDefault()
     if (this.props.tags && Object.keys(this.props.tags) && Object.keys(this.props.tags).length !== 0) {
@@ -90,6 +120,7 @@ class Courses_add extends Component {
   }
   onSelectChange(e) {
     let ids = e.target.value.split('/')
+    console.log('tagValue',ids,e.target.name)
     let categoryIds = this.state.categoryIds
     let tagIds = this.state.tagIds
     categoryIds[Number(e.target.name)] = ids[0]
@@ -101,14 +132,14 @@ class Courses_add extends Component {
   }
   renderTagsSelectionList() {
     let tagsSelectionList = []
-    for (let i = 0; i < this.state.categoryIds.length; i ++) {
+    for (let i = 0; i < this.state.tagIds.length; i ++) {
       tagsSelectionList.push(
         <div className='d-flex' key={i}>
           <select id="tagsSelect" className="form-control col-sm-8 mt-2"
                   name={i}
                   onChange={this.onSelectChange.bind(this)}
                   style={{textAlignLast: 'center'}}>
-            {this.renderTagsSelection()}
+            {this.renderTagsSelection(this.state.tagIds[i])}
           </select>
           <button
             onClick={this.deleteOneTagsSelection.bind(this, i)}
@@ -131,12 +162,13 @@ class Courses_add extends Component {
       tagIds: this.state.tagIds
     }, () => console.log(1, this.state))
   }
-  renderTagsSelection() {
+  renderTagsSelection(selectedTagId) {
     let tagsList = []
     if (this.props.tags && Object.keys(this.props.tags) && Object.keys(this.props.tags).length !== 0) {
       for (let key in this.props.tags) {
         tagsList.push(
           <option key={key}
+                  selected={selectedTagId == key ?  true: false}
                   value={this.props.tags[key].category+ '/' +this.props.tags[key].id}>
             {this.props.tags[key].name}
           </option>
@@ -149,7 +181,7 @@ class Courses_add extends Component {
   addCourseContains(e) {
     e.preventDefault()
     this.setState({
-      courseContains: [...this.state.courseContains, '']
+      courseContains: [...this.state.courseContains, null]
     })
   }
   onCourseContainsChange(e) {
@@ -193,7 +225,9 @@ class Courses_add extends Component {
     })
   }
   onMapSearch(e) {
-    e.preventDefault()
+    if (e) {
+      e.preventDefault()
+    }
     let BMap = window.BMap
     var map = new BMap.Map("allmap");            // 创建Map实例
     var point = new BMap.Point(120.102521, 30.26782); // 创建点坐标
@@ -213,8 +247,9 @@ class Courses_add extends Component {
         let lngGcj02 = lngLat['tempLon']
         let latGcj02 = lngLat['tempLat']
         this.setState({
-          mapSearchCity: addComp.province + ", " + addComp.city,
-          mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+          mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
+          mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+          mapHasAuto: true,
           lng: lngGcj02,
           lat: latGcj02
         })
@@ -231,8 +266,9 @@ class Courses_add extends Component {
           geoc.getLocation(pt, (rs) => {
             var addComp = rs.addressComponents;
             this.setState({
-              mapSearchCity: addComp.province + ", " + addComp.city,
-              mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+              mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
+              mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+              mapHasAuto: true,
               lng: lngGcj02,
               lat: latGcj02
             })
@@ -254,8 +290,9 @@ class Courses_add extends Component {
         geoc.getLocation(point, (rs) => {
           var addComp = rs.addressComponents;
           this.setState({
-            mapSearchCity: addComp.province + ", " + addComp.city,
-            mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+            mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
+            mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+            mapHasAuto: true,
             lng: lngGcj02,
             lat: latGcj02
           })
@@ -269,8 +306,9 @@ class Courses_add extends Component {
           geoc.getLocation(pt, (rs) => {
               var addComp = rs.addressComponents;
               this.setState({
-                mapSearchCity: addComp.province + ", " + addComp.city,
-                mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+                mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
+                mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
+                mapHasAuto: true,
                 lng: lngGcj02,
                 lat: latGcj02
               })
@@ -306,7 +344,7 @@ class Courses_add extends Component {
       for (let i = 0; i < e.target.files.length; i ++) {
         cos.uploadFile(e.target.files[i]).then(response => {
           this.setState({
-            images: [...this.state.images, response.Location]
+            images: [...this.state.images, 'http://' + response.Location]
           })
           console.log('upload', response)
         }).catch(console.error)
@@ -318,7 +356,6 @@ class Courses_add extends Component {
     if (e.target.name === 'mapSearchSubmit') {
       return
     }
-
     let hasTag = true
     this.state.tagIds.forEach((id) => {
       if (id == '') {
@@ -346,32 +383,39 @@ class Courses_add extends Component {
       return
     }
     if (this.state.lng == null || this.state.lat == null) {
-      alert('请点击搜索按钮，或在地图上标注课程地址，以确认您输入的地址有效。')
+      alert('请点击地图的搜索按钮，或在地图上标注课程地址，以确认您输入的地址有效，并正确标注在地图上。')
       return
     }
     if (this.state.title.trim().length == 0
     || this.state.content.trim().length == 0
-     || this.state.note.trim().length == 0) {
+     || (this.state.note && this.state.note.trim().length == 0)) {
       alert('请勿在任何输入框内输入完全空的内容。')
       return
     }
 
     this.state.courseContains.forEach(courseContainsItem => {
-      if (courseContainsItem.trim().length == 0) {
+      if (courseContainsItem && courseContainsItem.trim().length == 0) {
         alert('请勿在任何输入框内输入完全空的内容。')
         return
       }
     })
+
+    if (this.state.edit) {
+      this.props.editCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
+        this.state.content,this.state.courseContains,this.state.mapSearchCity, this.state.lng, this.state.lat,
+        this.state.note,this.state.price, this.state.mapSearchAfterCity, this.props.match.params.id).then(() => this.props.history.push('/courses/'))
+      return
+    }
     this.props.addCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
-      this.state.content,this.state.courseContains,this.state.mapSearchCity + this.state.mapSearchAfterCity, this.state.lng, this.state.lat,
-      this.state.note,this.state.price)
+      this.state.content,this.state.courseContains,this.state.mapSearchCity, this.state.lng, this.state.lat,
+      this.state.note,this.state.price, this.state.mapSearchAfterCity).then(() => this.props.history.push('/courses/'))
   }
   renderImages() {
     let imagesRenderList = []
     for (let i = 0; i < this.state.images.length; i ++) {
       imagesRenderList.push(
         <div key={i} className='mt-2 ml-0' >
-        <img style={{width: '500px'}} src={'http://' + this.state.images[i]}/>
+        <img style={{width: '500px'}} src={this.state.images[i]}/>
         <button
           onClick={this.deleteOneImage.bind(this, i)}
           className="btn btn-outline-dark my-2 mx-3 my-sm-2"
@@ -409,6 +453,7 @@ class Courses_add extends Component {
                          name='title'
                          onChange={this.onValueChange.bind(this)}
                          maxLength='20'
+                         value={this.state.title}
                          required
                          autoFocus/>
                   <div className='d-flex align-items-center'>
@@ -446,13 +491,16 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>商圈</label>
-                <div className='col-sm-5'><input className="form-control" onChange={this.onValueChange.bind(this)}
+                <div className='col-sm-5'>
+                  <input className="form-control"
+                         value={this.state.place}
+                         onChange={this.onValueChange.bind(this)}
                                                  name="place" required/></div>
               </div>
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程时长</label>
-                <div className='col-sm-2 d-flex'><input className="form-control col-sm-10" name='duration' type="number"
+                <div className='col-sm-2 d-flex'><input className="form-control col-sm-10" name='duration' type="number" value={this.state.duration}
                                                         step="any" onChange={this.onValueChange.bind(this)}/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>小时</div>
@@ -462,7 +510,9 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程单价</label>
-                <div className='col-sm-2 d-flex'><input className="form-control  col-sm-10" name='price' type="number"
+                <div className='col-sm-2 d-flex'>
+                  <input className="form-control  col-sm-10" name='price' type="number"
+                         value={this.state.price}
                                                         step="any" onChange={this.onValueChange.bind(this)} required/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>元</div>
@@ -474,6 +524,7 @@ class Courses_add extends Component {
                 <label className='form_label col-sm-2 col-form-label'>课程内容</label>
                 <div className='col-sm-5'>
                   <textarea className="form-control" id='courseInfo' name='content'
+                            value={this.state.content}
                             onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
@@ -501,15 +552,22 @@ class Courses_add extends Component {
                            name='mapSearchCity'
                            onKeyUp={this.auto_grow.bind(this)}
                            placeholder='请输入省份 + 城市名'
+                           value={this.state.mapSearchCity}
                            required
                     />
                     <input className="form-control wrap mt-2" value={this.state.mapSearchAfterCity}
                            onChange={this.onValueChange.bind(this)}
                            name='mapSearchAfterCity'
                            onKeyUp={this.auto_grow.bind(this)}
-                           placeholder='请输入详细地址，不用包含城市名'
+                           placeholder='请输入详细地址，不用包含省市名'
+                           value={this.state.mapSearchAfterCity}
                            required/>
-                    <div className='d-flex'>
+                    <div className='d-flex flex-column'>
+                      {this.state.mapHasAuto &&
+                      <div style={{textAlign: 'left'}}>{'提醒：地图搜索得出的地址信息为：\"' +
+                      this.state.mapSearchCity_mapAuto + '-' + this.state.mapSearchAfterCity_mapAuto
+                      + '\"， 请确认您输入的地址。如无误，请继续。'}</div>
+                      }
                       <button type='submit' className="btn btn-outline-dark my-2 mx-0 my-sm-2"
                               style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}>搜索该地址
                       </button>
@@ -523,7 +581,7 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>备注</label>
                 <div className='col-sm-5'>
-                  <textarea className="form-control" id='otherInfo' name='note'
+                  <textarea className="form-control" id='otherInfo' name='note' value={this.state.note}
                             onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
@@ -551,8 +609,9 @@ class Courses_add extends Component {
 function mapStateToProps(state) {
   return {
     authenticated: state.auth.authenticated,
-    tags: state.courses.tags
+    tags: state.courses.tags,
+    course: state.courses.course
   }
 }
-export default connect(mapStateToProps,{createCourse, fetchCourseTags, addCourse})(Courses_add)
+export default connect(mapStateToProps,{editCourse, fetchCourseTags, addCourse, fetchCourse})(Courses_add)
 

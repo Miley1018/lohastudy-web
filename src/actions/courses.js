@@ -1,9 +1,9 @@
-import {FETCH_COURSES, POST_COURSE, FETCH_COURSE_TAGS} from './types';
+import {FETCH_COURSES, FETCH_COURSE_TAGS,FETCH_COURSE} from './types';
 import {request,requestWithToken} from "./request.js";
 
 export function fetchCourses() {
   return (dispatch) => {
-    return request('/courses', 'GET',  {"limit":"10"})
+    return request('/courses', 'GET',  {"limit":"10000"})
       .then((response) => {
         dispatch({
           type: FETCH_COURSES,
@@ -13,24 +13,10 @@ export function fetchCourses() {
   }
 }
 
-export function createCourse(content) {
-  return (dispatch) => {
-    return request('/courses', 'POST' , content)
-      .then((response) => {
-        console.log(1,response)
-        // dispatch({
-        //   type: POST_COURSE,
-        //   payload: response.data
-        // })
-      })
-  }
-}
-
 export function fetchCourseTags() {
   return (dispatch) => {
     return request('/course_tags', 'GET')
       .then((response) => {
-        console.log(2,response)
         dispatch({
           type: FETCH_COURSE_TAGS,
           payload: response.data
@@ -40,21 +26,47 @@ export function fetchCourseTags() {
 }
 
 export function addCourse(images,title, categories,tags,place,duration,
-  content,items,address, lng, lat,
-  note,price) {
+  content,items,city, lng, lat,
+  note,price, afterCity) {
   return (dispatch) => {
-    console.log('lng',lng,lat)
     return requestWithToken('/courses', 'POST', {course: {
       images,title, categories,tags,place,duration,
-      content,items,address, location:{type:'Point',coordinates:[lng, lat]},
+      content,items,concreteAddress: {city,detail:afterCity}, location:{type:'Point',coordinates:[lng, lat]},
       note,price}
     })
+  }
+}
+
+export function editCourse(images,title, categories,tags,place,duration,
+                          content,items,city, lng, lat,
+                          note,price, afterCity, id) {
+  return (dispatch) => {
+    return requestWithToken('/courses/' + id, 'PUT', {course: {
+        images,title, categories,tags,place,duration,
+        content,items,concreteAddress: {city,detail:afterCity}, location:{type:'Point',coordinates:[lng, lat]},
+        note,price}
+    })
+  }
+}
+
+export function deleteCourse(courseId) {
+  return (dispatch) => {
+    return requestWithToken('/courses/' + courseId, 'DELETE'
+    )
+      // .then((response) => {
+      //   console.log(2,response)
+      // })
+  }
+}
+
+export function fetchCourse(courseId) {
+  return (dispatch) => {
+    return request('/courses/' + courseId, 'GET')
       .then((response) => {
-        console.log(2,response)
-        // dispatch({
-        //   type: FETCH_COURSE_TAGS,
-        //   payload: response.data
-        // })
+        dispatch({
+          type: FETCH_COURSE,
+          payload: response.data
+        })
       })
   }
 }

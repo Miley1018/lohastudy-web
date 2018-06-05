@@ -51,7 +51,8 @@ ReactDOM.render(
                 <Route path='/categories' component={CategoriesContainer} />
                 <Route path='/tags' component={TagsContainer} />
                 <Route exact path='/courses' component={CoursesContainer} />
-                <Route path='/courses/add' component={Courses_add} />
+                <Route exact path='/courses/add' component={Courses_add} />
+                <Route path='/courses/add/:id' component={Courses_add} />
                 <Route path='/users' component={UsersContainer} />
             </div>
         </Router>
