@@ -14,6 +14,22 @@ export function fetchCategories() {
   }
 }
 
+export function addCategory(name, order, image) {
+  return (dispatch) => {
+    return requestWithToken('/categories', 'POST', {category: {
+        name, order, image}
+    })
+  }
+}
+
+export function editCategory(name, order, image, id) {
+  return (dispatch) => {
+    return requestWithToken('/categories/' + id, 'PUT', {category: {
+        name, order, image}
+    })
+  }
+}
+
 // export function fetchCourseTags() {
 //   return (dispatch) => {
 //     return request('/course_tags', 'GET')
@@ -26,33 +42,12 @@ export function fetchCategories() {
 //   }
 // }
 //
-// export function addCourse(images,title, categories,tags,place,duration,
-//                           content,items,city, lng, lat,
-//                           note,price, afterCity) {
-//   return (dispatch) => {
-//     return requestWithToken('/courses', 'POST', {course: {
-//         images,title, categories,tags,place,duration,
-//         content,items,concreteAddress: {city,detail:afterCity}, location:{type:'Point',coordinates:[lng, lat]},
-//         note,price}
-//     })
-//   }
-// }
-//
-// export function editCourse(images,title, categories,tags,place,duration,
-//                            content,items,city, lng, lat,
-//                            note,price, afterCity, id) {
-//   return (dispatch) => {
-//     return requestWithToken('/courses/' + id, 'PUT', {course: {
-//         images,title, categories,tags,place,duration,
-//         content,items,concreteAddress: {city,detail:afterCity}, location:{type:'Point',coordinates:[lng, lat]},
-//         note,price}
-//     })
-//   }
-// }
 
-export function deleteCourse(courseId) {
+//
+
+export function deleteCategory(categoryId) {
   return (dispatch) => {
-    return requestWithToken('/courses/' + courseId, 'DELETE'
+    return requestWithToken('/categories/' + categoryId, 'DELETE'
     )
     // .then((response) => {
     //   console.log(2,response)

@@ -2,7 +2,7 @@ const categoryConstructor = (category) => {
   return {
     id: category['id'],
     name: category['name'],
-    weight: category['weight'],
+    weight: category['order'],
     image: category['image'],
     operation: ''
   };

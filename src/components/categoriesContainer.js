@@ -7,7 +7,7 @@ import Footer from './footer'
 import Header from './header'
 
 import makeCategoryItems from './makeCategoryItems.js'
-import {fetchCategories, deleteCourse} from '../actions/categories'
+import {fetchCategories, deleteCategory, addCategory, editCategory} from '../actions/categories'
 import cos from "../utils/upload";
 
 class CategoriesContainer extends React.Component {
@@ -15,11 +15,12 @@ class CategoriesContainer extends React.Component {
     super(props)
     this.state = {
       tableData: [],
-      categoryId: null,
       addCategory: false,
       name:'',
       weight: null,
-      image:''
+      image:'',
+      edit: false,
+      thisCategoryId: ''
     }
   }
   componentWillMount() {
@@ -47,20 +48,36 @@ class CategoriesContainer extends React.Component {
       return
     }
 
-    if (this.state.title.trim().length == 0) {
+    if (this.state.name.trim().length == 0) {
       alert('请勿在任何输入框内输入完全空的内容。')
       return
     }
 
-    // if (this.state.edit) {
-    //   this.props.editCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
-    //     this.state.content,this.state.courseContains,this.state.mapSearchCity, this.state.lng, this.state.lat,
-    //     this.state.note,this.state.price, this.state.mapSearchAfterCity, this.props.match.params.id).then(() => this.props.history.push('/courses/'))
-    //   return
-    // }
-    // this.props.addCategory(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
-    //   this.state.content,this.state.courseContains,this.state.mapSearchCity, this.state.lng, this.state.lat,
-    //   this.state.note,this.state.price, this.state.mapSearchAfterCity).then(() => this.props.history.push('/courses/'))
+    if (this.state.edit) {
+      this.props.editCategory(this.state.name, this.state.weight, this.state.image, this.state.thisCategoryId).then(() => {
+        this.props.fetchCategories().then(
+          this.setState({
+            addCategory: false,
+            edit: false,
+            thisCategoryId: '',
+            name: '',
+            weight: null,
+            image: ''
+          }))
+      })
+      return
+    }
+    this.props.addCategory(this.state.name, this.state.weight, this.state.image).then(() => {
+      this.props.fetchCategories().then(
+        this.setState({
+          addCategory: false,
+          edit: false,
+          thisCategoryId: '',
+          name: '',
+          weight: null,
+          image: ''
+        }))
+    })
   }
   onValueChange(e) {
     this.setState({
@@ -86,7 +103,12 @@ class CategoriesContainer extends React.Component {
   }
   cancelAdd() {
     this.setState({
-      addCategory: false
+      addCategory: false,
+      edit: false,
+      thisCategoryId: '',
+      name: '',
+      weight: null,
+      image: ''
     })
   }
   render() {
@@ -124,14 +146,22 @@ class CategoriesContainer extends React.Component {
         headerClassName: 'columnCell twentyPer',
         Cell: row => {
           return (<div>
-            <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={(() => {this.props.history.push('/courses/add/' + row.original.id)}).bind(this)}>编辑</button>
+            <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={() => {
+              this.setState({
+                thisCategoryId: row.original.id,
+                addCategory: true,
+                edit:true,
+                name:this.props.categories[row.original.id].name,
+                weight: this.props.categories[row.original.id].order,
+                image: this.props.categories[row.original.id].image
+              })
+            }}>编辑</button>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0'
                     onClick={() => {
-                      this.props.history.push('/courses/add/')
-                      // const confirmValue = confirm('确认删除该一级品类？* 一级品类id：' + row.original.id)
-                      // if (confirmValue) {
-                      //   this.props.deleteCategory(row.original.id).then(() => this.props.fetchCategories())
-                      // }
+                      const confirmValue = confirm('确认删除该一级品类？* 一级品类id：' + row.original.id)
+                      if (confirmValue) {
+                        this.props.deleteCategory(row.original.id).then(() => this.props.fetchCategories())
+                      }
                     }} >
               删除</button>
           </div>)
@@ -156,7 +186,7 @@ class CategoriesContainer extends React.Component {
                            name='name'
                            onChange={this.onValueChange.bind(this)}
                            maxLength='20'
-                           value={this.state.title}
+                           value={this.state.name}
                            required
                            autoFocus/>
                   </div>
@@ -209,15 +239,6 @@ class CategoriesContainer extends React.Component {
           <hr className="style-two" />
           <div className='d-flex ' style={{marginLeft:'25px', marginBottom:'30px'}}><button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button></div>
           <ReactTable
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: (e, handleOriginal) => {
-                  if (rowInfo) {
-                    this.setState({
-                      categoryId: rowInfo.row.id
-                    })
-                  }
-                }}}}
             data={this.state.tableData}
             columns={columns}
             defaultPageSize={15}
@@ -243,4 +264,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {fetchCategories, deleteCourse})(CategoriesContainer)
+export default connect(mapStateToProps, {fetchCategories, deleteCategory, addCategory, editCategory})(CategoriesContainer)

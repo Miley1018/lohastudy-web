@@ -13,8 +13,7 @@ class CoursesContainer extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      tableData: [],
-      courseId: null
+      tableData: []
     }
   }
   componentWillMount() {
@@ -90,15 +89,6 @@ class CoursesContainer extends React.Component {
           <hr className="style-two" />
           <div className='d-flex ' style={{marginLeft:'25px', marginBottom:'30px'}}><button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button></div>
           <ReactTable
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: (e, handleOriginal) => {
-                  if (rowInfo) {
-                    this.setState({
-                      courseId: rowInfo.row.id
-                    })
-                  }
-                }}}}
             data={this.state.tableData}
             columns={columns}
             defaultPageSize={15}

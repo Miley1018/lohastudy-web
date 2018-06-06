@@ -13,8 +13,9 @@ export function requestWithToken(url, method, content) {
     ).then().catch(error => {
         if (error.response.status === 401) {
             location.href = '/signin'
+          return
         }
-        console.log(error)
+        return error.response
     })
 }
 
