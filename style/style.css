@@ -34,6 +34,9 @@ body {
     justify-content: center;
 }
 
+a:hover {
+    cursor: pointer;
+}
 .componentOnShowModal {
     color: #000;
     opacity: 1;
@@ -78,6 +81,13 @@ body {
 }
 
 #allmap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin:0;
+}
+
+#smallmap {
     width: 100%;
     height: 100%;
     overflow: hidden;

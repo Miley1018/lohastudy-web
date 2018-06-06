@@ -13,6 +13,14 @@ export function fetchOrders() {
   }
 }
 
+export function updateOrder(courseDate, courseTime, status, id) {
+  return (dispatch) => {
+    return requestWithToken('/orders/' + id, 'PUT', {order: {courseDate, courseTime, status}}).then((response) => {
+      console.log(response)
+    })
+  }
+}
+
 export function fetchCourseTags() {
   return (dispatch) => {
     return request('/course_tags', 'GET')

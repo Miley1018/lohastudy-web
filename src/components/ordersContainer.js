@@ -2,11 +2,14 @@ import React from 'react'
 import {connect} from 'react-redux'
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import Footer from './footer'
 import Header from './header'
 
-import {fetchOrders} from '../actions/orders.js'
+import {fetchOrders, updateOrder} from '../actions/orders.js'
 import makeOrdersItems from "./makeOrdersItems";
 
 class OrdersContainer extends React.Component {
@@ -16,6 +19,7 @@ class OrdersContainer extends React.Component {
       tableData: [],
       editOrder: false,
       thisOrderId: '',
+      courseId: '',
       edit: false,
       title:'',
       status:'',
@@ -25,7 +29,7 @@ class OrdersContainer extends React.Component {
       detail:'',
       lng:'',
       lat:'',
-      courseDate: '',
+      courseDate: moment(),
       courseTime: ''
     }
   }
@@ -36,11 +40,14 @@ class OrdersContainer extends React.Component {
     }
     this.props.fetchOrders()
   }
+
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps)
     this.setState({
       tableData: makeOrdersItems(nextProps.orders)
     })
   }
+
   onSelectStatusChange(e) {
     if (e.target.value == 'all') {
       this.setState({
@@ -77,6 +84,41 @@ class OrdersContainer extends React.Component {
   }
   onSubmitEditOrder(e) {
     e.preventDefault()
+    this.props.updateOrder(this.state.courseDate, this.state.courseTime, this.state.status, this.state.thisOrderId).then(() => {
+      this.props.fetchOrders().then(
+        this.setState({
+          editOrder: false,
+          thisOrderId: '',
+          edit: false,
+          title:'',
+          status:'',
+          nickname:'',
+          phoneNumber:'',
+          city:'',
+          detail:'',
+          lng:'',
+          lat:'',
+          courseDate:  moment(),
+          courseTime: ''
+        }))
+    })
+  }
+
+  onEditStatusChange(e) {
+    this.setState({
+      status: e.target.value
+    })
+  }
+  onValueChange(e) {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+  handleCourseDateChange(date) {
+    console.log(date)
+    this.setState({
+      courseDate: date
+    }, ()=>console.log(this.state))
   }
   render() {
     if (!this.props.authenticated) {
@@ -132,18 +174,27 @@ class OrdersContainer extends React.Component {
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={() => {
               this.setState({
                 thisOrderId: row.original.id,
+                courseId: this.props.orders[row.original.id].course.id,
                 editOrder: true,
                 edit:true,
                 title:this.props.orders[row.original.id].course.title,
                 status:this.props.orders[row.original.id].status,
                 nickname:this.props.orders[row.original.id].user.nickname,
                 phoneNumber:this.props.orders[row.original.id].user.phoneNumber,
-                city:this.props.orders[row.original.id].course.concreteAddress.city,
-                detail:this.props.orders[row.original.id].course.concreteAddress.detail,
+                city:this.props.orders[row.original.id].course.concreteAddress && this.props.orders[row.original.id].course.concreteAddress.city,
+                detail:this.props.orders[row.original.id].course.concreteAddress && this.props.orders[row.original.id].course.concreteAddress.detail,
                 lng:this.props.orders[row.original.id].course.location.coordinates[0],
                 lat:this.props.orders[row.original.id].course.location.coordinates[1],
                 courseDate: this.props.orders[row.original.id].courseDate,
                 courseTime: this.props.orders[row.original.id].courseTime
+              }, () => {
+                let BMap = window.BMap
+                var map = new BMap.Map("smallmap");            // 创建Map实例
+                var point = new BMap.Point(this.state.lng || 120.207947, this.state.lat || 30.247883); // 创建点坐标
+                map.centerAndZoom(point, 12);
+                map.enableScrollWheelZoom();                 //启用滚轮放大缩小
+                var marker = new BMap.Marker(point);// 创建标注
+                map.addOverlay(marker);             // 将标注添加到地图中
               })
             }}>编辑/查看</button>
           </div>)
@@ -155,11 +206,11 @@ class OrdersContainer extends React.Component {
     return (
       <div className='pageWrap'>
         <Header />
-        <div className='flexGrow'>
+        <div className='flexGrow' style={{position: 'relative'}}>
           {this.state.editOrder &&
-          <div className='showModal' style={{position: 'relative'}}>
+          <div className='showModal'>
             <div className='componentOnShowModal col-sm-5'>
-              <h3 style={{textAlign: 'left', margin: '15px 25px'}}>新增二级品类</h3>
+              <h3 style={{textAlign: 'left', margin: '15px 25px'}}>编辑／查看预约</h3>
               <hr className="style-two"/>
               <form name='formSubmit' className='mainBody_form' onSubmit={this.onSubmitEditOrder.bind(this)}>
                 <div className='form-group row'>
@@ -170,6 +221,9 @@ class OrdersContainer extends React.Component {
                            value={this.state.title}
                            disabled
                            />
+                    <div className='d-flex align-items-center ml-2'>
+                    <a onClick={() => this.props.history.push('/courses/add/' + this.state.courseId)} style={{textDecoration: 'underline'}}>详情</a>
+                    </div>
                   </div>
                 </div>
 
@@ -177,7 +231,6 @@ class OrdersContainer extends React.Component {
                   <label className='form_label col-sm-3 col-form-label'>预约状态</label>
                   <div className='col-sm-8 d-flex flex-column'>
                     <select className='form-control col-sm-8 mt-2' onChange={this.onEditStatusChange.bind(this)}>
-                      <option value='all'>全部</option>
                       <option value='pending'>预约确认中</option>
                       <option value='confirmed'>预约成功</option>
                       <option value='cancelled'>预约已取消</option>
@@ -209,11 +262,32 @@ class OrdersContainer extends React.Component {
 
                 <div className='form-group row'>
                   <label className='form_label col-sm-3 col-form-label'>上课地点</label>
+                  <div className='col-sm-8'>
+                    <input className="form-control col-sm-10"
+                           value={(this.state.city + this.state.detail) ? (this.state.city + this.state.detail) : ''}
+                           disabled
+                    />
+                    <div id="smallmap"  className="col-sm-10" style={{height: '250px'}}></div>
+                  </div>
+                </div>
+
+                <div className='form-group row'>
+                  <label className='form_label col-sm-3 col-form-label'>上课时间</label>
+                  <div className='col-sm-8 d-flex'>
+                    <DatePicker
+                      selected={(!this.state.courseDate || this.state.courseDate== '') ? '' : moment(this.state.courseDate)}
+                      onChange={this.handleCourseDateChange.bind(this)}
+                    />
+                  </div>
+                </div>
+
+                <div className='form-group row'>
+                  <label className='form_label col-sm-3 col-form-label'>时间说明</label>
                   <div className='col-sm-8 d-flex'>
                     <input className="form-control col-sm-10"
-                           name='phoneNumber'
-                           value={this.state.phoneNumber}
-                           disabled
+                           value={this.state.courseTime}
+                           name='courseTime'
+                           onChange={this.onValueChange.bind(this)}
                     />
                   </div>
                 </div>
@@ -246,13 +320,6 @@ class OrdersContainer extends React.Component {
             </select>
           </div>
           <ReactTable
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: (e, handleOriginal) => {
-                  if (rowInfo) {
-                    this.props.history.push('/projectDetails/' + rowInfo.original.id)
-                  }
-                }}}}
             data={this.state.tableData}
             columns={columns}
             defaultPageSize={15}
@@ -277,4 +344,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {fetchOrders})(OrdersContainer)
+export default connect(mapStateToProps, {fetchOrders, updateOrder})(OrdersContainer)
