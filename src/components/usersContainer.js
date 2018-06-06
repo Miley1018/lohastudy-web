@@ -6,28 +6,8 @@ import "react-table/react-table.css";
 import Footer from './footer'
 import Header from './header'
 
-import makeProjectItems from './makeProjectItems.js'
-import {fetchProjects} from '../actions/projects'
-
-const columns = [
-  {   Header: "Project Name",
-    accessor: "projectName",
-    className: 'bigColumn',
-    headerClassName: 'bigColumn_header'
-  },
-  {   Header: "Past Days",
-    accessor: "createTime",
-    className: 'smallColumn',
-    minWidth: 30,
-    headerClassName: 'smallColumn_header'
-  },
-  {   Header: "Project Id",
-    accessor: "id",
-    className: 'smallColumn',
-    minWidth: 30,
-    headerClassName: 'smallColumn_header'
-  }
-]
+import makeUsersItems from './makeUsersItems.js'
+import {fetchUsers} from '../actions/users'
 
 class UsersContainer extends React.Component {
   constructor(props) {
@@ -38,34 +18,73 @@ class UsersContainer extends React.Component {
   }
   componentWillMount() {
     if (!this.props.authenticated) {
-       console.log(this.props.authenticated)
       this.props.history.push('/signin')
       return
     }
-    this.props.fetchProjects().then(()=>{
-      this.setState({
-        tableData: makeProjectItems(this.props.projects)
-      })
+    this.props.fetchUsers()
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      tableData: makeUsersItems(nextProps.users)
     })
   }
   render() {
     if (!this.props.authenticated) {
       return <div></div>
     }
+    const columns = [
+      {   Header: "ID",
+        accessor: "id",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
+      },
+      {   Header: "OPEN ID",
+        accessor: "openId",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
+      },
+      {   Header: "名字",
+        accessor: "name",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
+      },
+      {   Header: "昵称",
+        accessor: "nickname",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
+      },
+      {   Header: "手机",
+        accessor: "this.phoneNumber",
+        className: 'columnCell fifPer',
+        headerClassName: 'columnCell fifPer'
+      },
+      {   Header: "邮箱",
+        accessor: "email",
+        className: 'columnCell fifPer',
+        headerClassName: 'columnCell fifPer'
+      },
+      {   Header: "头像",
+        accessor: "avatar",
+        className: 'columnCell twentyPer',
+        headerClassName: 'columnCell twentyPer',
+        Cell: row => (
+          <img alt='user_pic' src={row.row.pic}/>
+        )
+      },
+      {   Header: "用户类型",
+        accessor: "scope",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
+      },
+    ]
     let height = screen.height * 0.77 + 'px'
     return (
-      <div className='pageWrap'>
-          <Header />
+      <div className='pageWrap' >
+        <Header />
         <div className='flexGrow'>
-          <h3 style={{textAlign: 'left', margin: '15px 15px'}}>用户管理</h3>
+          <h3 style={{textAlign: 'left', margin: '15px 25px'}}>用户管理</h3>
+          <hr className="style-two" />
           <ReactTable
-            getTdProps={(state, rowInfo, column, instance) => {
-              return {
-                onClick: (e, handleOriginal) => {
-                  if (rowInfo) {
-                    this.props.history.push('/projectDetails/' + rowInfo.original.id)
-                  }
-                }}}}
             data={this.state.tableData}
             columns={columns}
             defaultPageSize={15}
@@ -73,7 +92,8 @@ class UsersContainer extends React.Component {
             className="-highlight defaultMargin"
             style={{
               height: height,
-              margin:'15px 15px'
+              margin:'15px 15px',
+              border:'hidden'
             }}
           />
         </div>
@@ -85,9 +105,9 @@ class UsersContainer extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    projects: state.projects.toList(),
+    users: state.users.users,
     authenticated: state.auth.authenticated
   }
 }
 
-export default connect(mapStateToProps, {fetchProjects})(UsersContainer)
+export default connect(mapStateToProps, {fetchUsers})(UsersContainer)

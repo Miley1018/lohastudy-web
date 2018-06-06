@@ -138,8 +138,8 @@ class TagsContainer extends React.Component {
       },
       {   Header: "操作",
         accessor: "operation",
-        className: 'columnCell twentyPer',
-        headerClassName: 'columnCell twentyPer',
+        className: 'columnCell thirtyPer',
+        headerClassName: 'columnCell thirtyPer',
         Cell: row => {
           return (<div>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={() => {

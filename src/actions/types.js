@@ -11,3 +11,5 @@ export const FETCH_COURSE='FETCH_COURSE';
 
 export const FETCH_CATEGORIES='FETCH_CATEGORIES';
 export const FETCH_TAGS='FETCH_TAGS';
+
+export const FETCH_USERS='FETCH_USERS';
