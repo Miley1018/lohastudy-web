@@ -168,7 +168,7 @@ class TagsContainer extends React.Component {
     return (
       <div className='pageWrap' >
         <Header />
-        <div className='flexGrow'>
+        <div className='flexGrow' style={{position: 'relative'}}>
           {this.state.addTag &&
           <div className='showModal'>
             <div className='componentOnShowModal col-sm-5'>
@@ -203,10 +203,10 @@ class TagsContainer extends React.Component {
                   <label className='form_label col-sm-2 col-form-label'> </label>
                   <div className='col-sm-5 d-flex'>
                     <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}} type='submit'
-                            name='formSubmit'>Submit
+                            name='formSubmit'>&nbsp; &nbsp;提交&nbsp; &nbsp;
                     </button>
                     <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}} type='button'
-                            onClick={this.cancelAdd.bind(this)}>Cancel
+                            onClick={this.cancelAdd.bind(this)}>&nbsp; &nbsp;取消&nbsp; &nbsp;
                     </button>
                   </div>
                 </div>

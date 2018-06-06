@@ -10,3 +10,5 @@ export const FETCH_CATEGORIES='FETCH_CATEGORIES';
 export const FETCH_TAGS='FETCH_TAGS';
 
 export const FETCH_USERS='FETCH_USERS';
+
+export const FETCH_ORDERS='FETCH_ORDERS';

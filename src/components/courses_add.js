@@ -203,7 +203,10 @@ class Courses_add extends Component {
       courseContainsList.push(
         <div className='d-flex' key={i}>
           <div className='col-sm-1'>{i + 1}、</div>
-          <textarea className="form-control mt-2" name={i} onChange={this.onCourseContainsChange.bind(this)}
+          <textarea className="form-control mt-2" name={i}
+                    onKeyUp={this.auto_grow.bind(this)}
+                    style={{height:'60px'}}
+                    onChange={this.onCourseContainsChange.bind(this)}
                     value={this.state.courseContains[i]}/>
           <button
             onClick={this.deleteOneCourseContains.bind(this, i)}
@@ -328,12 +331,9 @@ class Courses_add extends Component {
   }
 
   auto_grow(element) {
-    // let row = ((element.target.id === 'courseInfo'
-    //   || element.target.id === 'courseContains'
-    //   || element.target.id === 'otherInfo')
-    //   ? 84 : 38)
-    // element.target.style.height = 'auto';
-    // element.target.style.height = (element.target.scrollHeight > row ? element.target.scrollHeight : row) + "px";
+    const row = 60
+    element.target.style.height = 'auto';
+    element.target.style.height = (element.target.scrollHeight > row ? element.target.scrollHeight : row) + "px";
   }
   onImagesChange(e) {
     if (e.target.files) {
@@ -520,6 +520,8 @@ class Courses_add extends Component {
                 <div className='col-sm-5'>
                   <textarea className="form-control" id='courseInfo' name='content'
                             value={this.state.content}
+                            style={{height: '60px'}}
+                            onKeyUp={this.auto_grow.bind(this)}
                             onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
@@ -545,7 +547,6 @@ class Courses_add extends Component {
                     <input className="form-control wrap" value={this.state.mapSearchCity}
                            onChange={this.onValueChange.bind(this)}
                            name='mapSearchCity'
-                           onKeyUp={this.auto_grow.bind(this)}
                            placeholder='请输入省份 + 城市名'
                            value={this.state.mapSearchCity}
                            required
@@ -553,7 +554,6 @@ class Courses_add extends Component {
                     <input className="form-control wrap mt-2" value={this.state.mapSearchAfterCity}
                            onChange={this.onValueChange.bind(this)}
                            name='mapSearchAfterCity'
-                           onKeyUp={this.auto_grow.bind(this)}
                            placeholder='请输入详细地址，不用包含省市名'
                            value={this.state.mapSearchAfterCity}
                            required/>
@@ -577,6 +577,8 @@ class Courses_add extends Component {
                 <label className='form_label col-sm-2 col-form-label'>备注</label>
                 <div className='col-sm-5'>
                   <textarea className="form-control" id='otherInfo' name='note' value={this.state.note}
+                            onKeyUp={this.auto_grow.bind(this)}
+                            style={{height: '60px'}}
                             onChange={this.onValueChange.bind(this)}/>
                 </div>
               </div>
@@ -585,10 +587,10 @@ class Courses_add extends Component {
                 <label className='form_label col-sm-2 col-form-label'> </label>
                 <div className='col-sm-5'>
                   <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}} type='submit'
-                          name='formSubmit'>Submit
+                          name='formSubmit'>提交
                   </button>
                   <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}}
-                          onClick={() => this.props.history.push('/courses')}>Cancel
+                          onClick={() => this.props.history.push('/courses')}>取消
                   </button>
                 </div>
               </div>

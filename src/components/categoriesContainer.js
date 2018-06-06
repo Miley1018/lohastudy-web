@@ -170,7 +170,7 @@ class CategoriesContainer extends React.Component {
     return (
       <div className='pageWrap' >
         <Header />
-        <div className='flexGrow'>
+        <div className='flexGrow' style={{position: 'relative'}}>
           {this.state.addCategory &&
           <div className='showModal'>
             <div className='componentOnShowModal col-sm-5'>
@@ -211,7 +211,7 @@ class CategoriesContainer extends React.Component {
 
                 <div className='form-group row'>
                   <label className='form_label col-sm-2 col-form-label'>权重</label>
-                  <div className='col-sm-3 d-flex'>
+                  <div className='col-sm-4 d-flex'>
                     <input className="form-control col-sm-10" name='weight' required type="number" value={this.state.weight}
                            step="any" onChange={this.onValueChange.bind(this)}/>
                   </div>
@@ -222,10 +222,10 @@ class CategoriesContainer extends React.Component {
                   <label className='form_label col-sm-2 col-form-label'> </label>
                   <div className='col-sm-5 d-flex'>
                     <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}} type='submit'
-                            name='formSubmit'>Submit
+                            name='formSubmit'>&nbsp; &nbsp;提交&nbsp; &nbsp;
                     </button>
                     <button className="btn btn-outline-success my-2 mx-4 my-sm-0" style={{width: '100px'}} type='button'
-                            onClick={this.cancelAdd.bind(this)}>Cancel
+                            onClick={this.cancelAdd.bind(this)}>&nbsp; &nbsp;取消&nbsp; &nbsp;
                     </button>
                   </div>
                 </div>

@@ -4,6 +4,7 @@ import coursesReducer from './courses_reducer';
 import categoriesReducer from './categories_reducer';
 import tagsReducer from './tags_reducer';
 import usersReducer from './users_reducer';
+import ordersReducer from './orders_reducer';
 import {UNAUTH_USER} from "../actions/types";
 
 const appReducer = combineReducers({
@@ -11,7 +12,8 @@ const appReducer = combineReducers({
   courses: coursesReducer,
   categories: categoriesReducer,
   tags: tagsReducer,
-  users: usersReducer
+  users: usersReducer,
+  orders: ordersReducer
 })
 
 const rootReducer = ( state, action ) => {

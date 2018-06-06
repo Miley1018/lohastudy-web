@@ -16,7 +16,6 @@ body {
     flex-grow: 1;
     flex-direction: column;
     margin: 15px 0px 0px 0px;
-    position: relative;
 }
 
 .showModal {
