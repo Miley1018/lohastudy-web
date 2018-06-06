@@ -54,7 +54,7 @@ class UsersContainer extends React.Component {
         headerClassName: 'columnCell tenPer'
       },
       {   Header: "手机",
-        accessor: "this.phoneNumber",
+        accessor: "phoneNumber",
         className: 'columnCell fifPer',
         headerClassName: 'columnCell fifPer'
       },
@@ -68,10 +68,10 @@ class UsersContainer extends React.Component {
         className: 'columnCell twentyPer',
         headerClassName: 'columnCell twentyPer',
         Cell: row => (
-          <img alt='user_pic' src={row.row.pic}/>
+          <img alt='user_pic' src={row.row.avatar}/>
         )
       },
-      {   Header: "用户类型",
+      {   Header: "类型",
         accessor: "scope",
         className: 'columnCell tenPer',
         headerClassName: 'columnCell tenPer'

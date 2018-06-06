@@ -35,7 +35,7 @@ class TagsContainer extends React.Component {
       }
       this.setState({
         categoryId: this.props.categories[Object.keys(this.props.categories)[0]].id
-      }, () => console.log('init',this.state))
+      })
     })
   }
   componentWillReceiveProps(nextProps) {
@@ -98,7 +98,7 @@ class TagsContainer extends React.Component {
     let id = e.target.value
     this.setState({
       categoryId: id
-    }, ()=> console.log(this.state))
+    })
   }
   renderCategoriesSelection(selectedCategoryId) {
     let categoriesList = []
@@ -143,7 +143,6 @@ class TagsContainer extends React.Component {
         Cell: row => {
           return (<div>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={() => {
-                console.log('tag', this.props.tags)
                 this.setState({
                   thisTagId: row.original.id,
                   addTag: true,

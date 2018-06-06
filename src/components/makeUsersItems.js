@@ -7,7 +7,7 @@ const userConstructor = (user) => {
     phoneNumber: user['phoneNumber'],
     email: user['email'],
     avatar: user['avatar'],
-    scope: user['scope']
+    scope: user['scope'] == 'admin' ? '管理员' : '用户'
   };
 };
 

@@ -5,7 +5,6 @@ export function fetchTags() {
   return (dispatch) => {
     return request('/course_tags', 'GET')
       .then((response) => {
-        console.log(response)
         dispatch({
           type: FETCH_TAGS,
           payload: response.data
@@ -25,9 +24,7 @@ export function addTag(name, category) {
 export function deleteTag(tagId) {
   return (dispatch) => {
     return requestWithToken('/course_tags/' + tagId, 'DELETE'
-    ).catch(error => {
-      console.log('err',error.response)
-    })
+    )
   }
 }
 

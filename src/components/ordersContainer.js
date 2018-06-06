@@ -6,8 +6,6 @@ import "react-table/react-table.css";
 import Footer from './footer'
 import Header from './header'
 
-import makeProjectItems from './makeProjectItems.js'
-import {fetchProjects} from '../actions/projects'
 
 const columns = [
   {   Header: "Project Name",
@@ -41,11 +39,7 @@ class OrdersContainer extends React.Component {
       this.props.history.push('/signin')
       return
     }
-    this.props.fetchProjects().then(()=>{
-      this.setState({
-        tableData: makeProjectItems(this.props.projects)
-      })
-    })
+
   }
   render() {
     if (!this.props.authenticated) {
@@ -88,4 +82,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {fetchProjects})(OrdersContainer)
+export default connect(mapStateToProps, {})(OrdersContainer)

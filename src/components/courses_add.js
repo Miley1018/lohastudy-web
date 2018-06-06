@@ -105,7 +105,6 @@ class Courses_add extends Component {
         && (nextProps.course.concreteAddress && nextProps.course.concreteAddress.detail)) {
         this.onMapSearch()
       }
-      console.log('init',this.state)
     })
   }
   addTagsSelection(e) {
@@ -115,12 +114,11 @@ class Courses_add extends Component {
       this.setState({
         categoryIds: [...this.state.categoryIds, this.props.tags[key1]['category']],
         tagIds: [...this.state.tagIds, this.props.tags[key1]['id']]
-      }, ()=> console.log(1,this.state))
+      })
     }
   }
   onSelectChange(e) {
     let ids = e.target.value.split('/')
-    console.log('tagValue',ids,e.target.name)
     let categoryIds = this.state.categoryIds
     let tagIds = this.state.tagIds
     categoryIds[Number(e.target.name)] = ids[0]
@@ -128,7 +126,7 @@ class Courses_add extends Component {
     this.setState({
       categoryIds: categoryIds,
       tagIds: tagIds
-    }, ()=> console.log(this.state))
+    })
   }
   renderTagsSelectionList() {
     let tagsSelectionList = []
@@ -160,7 +158,7 @@ class Courses_add extends Component {
     this.setState({
       categoryIds: this.state.categoryIds,
       tagIds: this.state.tagIds
-    }, () => console.log(1, this.state))
+    })
   }
   renderTagsSelection(selectedTagId) {
     let tagsList = []
@@ -197,7 +195,7 @@ class Courses_add extends Component {
     }
     this.setState({
       courseContains: this.state.courseContains
-    }, () => console.log(1, this.state))
+    })
   }
   renderCourseContainsList() {
     let courseContainsList = []
@@ -282,11 +280,9 @@ class Courses_add extends Component {
         var marker =new BMap.Marker(point);
         map.addOverlay(marker);
         marker.enableDragging();
-        console.log('search',point)
         let lngLat = this.bd09_To_Gcj02(point.lng, point.lat)
         let lngGcj02 = lngLat['tempLon']
         let latGcj02 = lngLat['tempLat']
-        console.log('search',lngGcj02,latGcj02)
         geoc.getLocation(point, (rs) => {
           var addComp = rs.addressComponents;
           this.setState({
@@ -346,7 +342,6 @@ class Courses_add extends Component {
           this.setState({
             images: [...this.state.images, 'http://' + response.Location]
           })
-          console.log('upload', response)
         }).catch(console.error)
       }
     }
@@ -432,7 +427,7 @@ class Courses_add extends Component {
     }
     this.setState({
       images: this.state.images
-    }, () => console.log(1, this.state))
+    })
   }
   render() {
     if (!this.props.authenticated) {

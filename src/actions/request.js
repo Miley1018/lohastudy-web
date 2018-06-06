@@ -15,7 +15,7 @@ export function requestWithToken(url, method, content) {
             location.href = '/signin'
           return
         }
-        return error.response
+        alert(error.response.data.errors.message)
     })
 }
 

@@ -51,11 +51,7 @@ export function editCourse(images,title, categories,tags,place,duration,
 
 export function deleteCourse(courseId) {
   return (dispatch) => {
-    return requestWithToken('/courses/' + courseId, 'DELETE'
-    )
-      // .then((response) => {
-      //   console.log(2,response)
-      // })
+    return requestWithToken('/courses/' + courseId, 'DELETE')
   }
 }
 

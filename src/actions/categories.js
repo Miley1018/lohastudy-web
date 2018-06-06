@@ -5,7 +5,6 @@ export function fetchCategories() {
   return (dispatch) => {
     return request('/categories', 'GET')
       .then((response) => {
-        console.log(response)
         dispatch({
           type: FETCH_CATEGORIES,
           payload: response.data
@@ -30,28 +29,10 @@ export function editCategory(name, order, image, id) {
   }
 }
 
-// export function fetchCourseTags() {
-//   return (dispatch) => {
-//     return request('/course_tags', 'GET')
-//       .then((response) => {
-//         dispatch({
-//           type: FETCH_COURSE_TAGS,
-//           payload: response.data
-//         })
-//       })
-//   }
-// }
-//
-
-//
-
 export function deleteCategory(categoryId) {
   return (dispatch) => {
     return requestWithToken('/categories/' + categoryId, 'DELETE'
     )
-    // .then((response) => {
-    //   console.log(2,response)
-    // })
   }
 }
 

@@ -24,7 +24,6 @@ class CoursesContainer extends React.Component {
     this.props.fetchCourses()
   }
   componentWillReceiveProps(nextProps) {
-    console.log(111,nextProps)
     this.setState({
       tableData: makeCoursesItems(nextProps.courses)
     })

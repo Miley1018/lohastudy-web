@@ -19,8 +19,6 @@ const cos = new COS({
       },
       responseType: 'text',
     }).then(response=> {
-
-      console.log('upload call',response)
       callback(response.data)
     }).catch(error => {
       if (error.response.status === 401) {

@@ -43,7 +43,7 @@ class CategoriesContainer extends React.Component {
   onSubmitAddCategory(e) {
     e.preventDefault()
 
-    if (this.state.imag == '') {
+    if (this.state.image == '') {
       alert('请添加一张图片。')
       return
     }
@@ -85,13 +85,11 @@ class CategoriesContainer extends React.Component {
     })
   }
   onImagesChange(e) {
-    console.log(e.target.files)
     if (e.target.files) {
       cos.uploadFile(e.target.files[0]).then(response => {
         this.setState({
           image: 'http://' + response.Location
         })
-        console.log('upload', response)
       }).catch(console.error)
     }
   }
