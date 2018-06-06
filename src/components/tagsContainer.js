@@ -148,7 +148,8 @@ class TagsContainer extends React.Component {
                   addTag: true,
                   edit:true,
                   name:this.props.tags[row.original.id].name,
-                  categoryId: this.props.tags[row.original.id].category
+                  categoryId: (!this.props.categories[this.props.tags[row.original.id].category]) ?
+                    this.props.categories[Object.keys(this.props.categories)[0]].id :this.props.tags[row.original.id].category
                 })
             }}>编辑</button>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0'
