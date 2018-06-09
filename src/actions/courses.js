@@ -25,27 +25,15 @@ export function fetchCourseTags() {
   }
 }
 
-export function addCourse(images,title, categories,tags,place,duration,
-  content,items,city, lng, lat,
-  note,price, afterCity) {
+export function addCourse(course) {
   return (dispatch) => {
-    return requestWithToken('/courses', 'POST', {course: {
-      images,title, categories,tags,place,duration,
-      content,items,concreteAddress: {city,detail:afterCity}, location:{type:'Point',coordinates:[lng, lat]},
-      note,price}
-    })
+    return requestWithToken('/courses', 'POST', {course})
   }
 }
 
-export function editCourse(images,title, categories,tags,place,duration,
-                          content,items,city, lng, lat,
-                          note,price, afterCity, id) {
+export function editCourse(course, id) {
   return (dispatch) => {
-    return requestWithToken('/courses/' + id, 'PUT', {course: {
-        images,title, categories,tags,place,duration,
-        content,items,concreteAddress: {city,detail:afterCity}, location:{type:'Point',coordinates:[lng, lat]},
-        note,price}
-    })
+    return requestWithToken('/courses/' + id, 'PUT', {course})
   }
 }
 

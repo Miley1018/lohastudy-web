@@ -4,140 +4,71 @@ import {editCourse,fetchCourseTags, addCourse, fetchCourse} from '../actions/cou
 import Footer from './footer'
 import Header from './header'
 import cos from '../utils/upload'
+import TcMap from './tcMap'
 
 class Courses_add extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      title:'',
-      categoryIds: [],
-      tagIds: [],
-      images:[],
-      place: '',
-      price:'',
-      duration: '',
-      content: '',
-      courseContains: [],
-      mapSearchCity: '',
-      mapSearchAfterCity: '',
-      lng: null,
-      lat: null,
-      note:null,
-      mapHasAuto: false,
-      mapSearchCity_mapAuto: '',
-      mapSearchAfterCity_mapAuto: '',
+      course: {
+        tags:[],
+        categories:[],
+        images:[],
+        items:[],
+        location:{type:'Point',coordinates:[
+          0,//lng
+            0,//lat
+          ]}
+      },
       edit: false
     }
+    this.onPoiSelected = this.onPoiSelected.bind(this)
+    this.onValueChange = this.onValueChange.bind(this)
   }
   componentWillMount() {
     this.props.fetchCourseTags()
     this.props.match.params.id &&  this.props.fetchCourse(this.props.match.params.id)
   }
-  componentDidMount() {
-    let BMap = window.BMap
-    var map = new BMap.Map("allmap");            // 创建Map实例
-    var point = new BMap.Point(120.207947,30.247883); // 创建点坐标
-    map.centerAndZoom(point,12);
-    map.enableScrollWheelZoom();                 //启用滚轮放大缩小
 
-    var myGeo = new BMap.Geocoder();
-    // 将地址解析结果显示在地图上,并调整地图视野
-
-    var geoc = new BMap.Geocoder();
-    map.addEventListener("click", (e) => {
-      var pt = e.point;
-      map.clearOverlays();
-      geoc.getLocation(pt, (rs) => {
-        var addComp = rs.addressComponents;
-        let lngLat = this.bd09_To_Gcj02(pt.lng, pt.lat)
-        let lngGcj02 = lngLat['tempLon']
-        let latGcj02 = lngLat['tempLat']
-        this.setState({
-          mapSearchCity: addComp.province + ", " + addComp.city,
-          mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
-          lng: lngGcj02,
-          lat: latGcj02
-        })
-
-        var point = new BMap.Point(e.point.lng,e.point.lat);
-        map.centerAndZoom(point,16);
-        var marker = new BMap.Marker(point);// 创建标注
-        map.addOverlay(marker);             // 将标注添加到地图中
-        marker.enableDragging();
-        marker.addEventListener("dragend", (e) => {
-          var pt = e.point;
-          let lngLat = this.bd09_To_Gcj02(pt.lng, pt.lat)
-          let lngGcj02 = lngLat['tempLon']
-          let latGcj02 = lngLat['tempLat']
-          geoc.getLocation(pt, (rs) => {
-            var addComp = rs.addressComponents;
-            this.setState({
-              mapSearchCity: addComp.province + ", " + addComp.city,
-              mapSearchAfterCity: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
-              lng: lngGcj02,
-              lat: latGcj02
-            })
-          })
-        })
-      })
-    })
-  }
   componentWillReceiveProps(nextProps) {
     nextProps.course &&
     this.setState({
-      title: nextProps.course.title,
-      categoryIds: nextProps.course.categories.map(category => category.id),
-      tagIds: nextProps.course.tags.map(tag => tag.id),
-      images:nextProps.course.images,
-      place: nextProps.course.place,
-      price:nextProps.course.price,
-      duration: nextProps.course.duration,
-      content: nextProps.course.content,
-      courseContains: nextProps.course.items,
-      mapSearchCity: nextProps.course.concreteAddress && nextProps.course.concreteAddress.city,
-      mapSearchAfterCity: nextProps.course.concreteAddress && nextProps.course.concreteAddress.detail,
-      lng: nextProps.course.location.coordinates.lng,
-      lat: nextProps.course.location.coordinates.lat,
-      note:nextProps.course.note,
+      course: {
+        ...nextProps.course,
+        tags: nextProps.course.tags.map(t=>t.id),
+        categories: nextProps.course.categories.map(c=>c.id),
+      },
       edit: true
-    }, () => {
-      if ((nextProps.course.concreteAddress && nextProps.course.concreteAddress.city)
-        && (nextProps.course.concreteAddress && nextProps.course.concreteAddress.detail)) {
-        this.onMapSearch()
-      }
     })
   }
   addTagsSelection(e) {
     e.preventDefault()
     if (this.props.tags && Object.keys(this.props.tags) && Object.keys(this.props.tags).length !== 0) {
       let key1 = Object.keys(this.props.tags)[0]
-      this.setState({
-        categoryIds: [...this.state.categoryIds, this.props.tags[key1]['category']],
-        tagIds: [...this.state.tagIds, this.props.tags[key1]['id']]
-      })
+      const course = this.state.course
+      course.tags = [...course.tags, this.props.tags[key1]['id']];
+      course.categories = [...course.categories, this.props.tags[key1]['category']]
+      this.setState({course})
     }
   }
   onSelectChange(e) {
     let ids = e.target.value.split('/')
-    let categoryIds = this.state.categoryIds
-    let tagIds = this.state.tagIds
+    let categoryIds = this.state.course.categories
+    let tagIds = this.state.course.tags
     categoryIds[Number(e.target.name)] = ids[0]
     tagIds[Number(e.target.name)] = ids[1]
-    this.setState({
-      categoryIds: categoryIds,
-      tagIds: tagIds
-    })
+    this.setState({course: this.state.course})
   }
   renderTagsSelectionList() {
     let tagsSelectionList = []
-    for (let i = 0; i < this.state.tagIds.length; i ++) {
+    for (let i = 0; i < this.state.course.tags.length; i ++) {
       tagsSelectionList.push(
         <div className='d-flex' key={i}>
           <select id="tagsSelect" className="form-control col-sm-8 mt-2"
                   name={i}
                   onChange={this.onSelectChange.bind(this)}
                   style={{textAlignLast: 'center'}}>
-            {this.renderTagsSelection(this.state.tagIds[i])}
+            {this.renderTagsSelection(this.state.course.tags[i])}
           </select>
           <button
             onClick={this.deleteOneTagsSelection.bind(this, i)}
@@ -151,14 +82,12 @@ class Courses_add extends Component {
     return tagsSelectionList
   }
   deleteOneTagsSelection(index) {
+    const course = this.state.course
     if (index > -1) {
-      this.state.categoryIds.splice(index, 1);
-      this.state.tagIds.splice(index, 1);
+      course.categories.splice(index, 1);
+      course.tags.splice(index, 1);
     }
-    this.setState({
-      categoryIds: this.state.categoryIds,
-      tagIds: this.state.tagIds
-    })
+    this.setState({course})
   }
   renderTagsSelection(selectedTagId) {
     let tagsList = []
@@ -178,28 +107,28 @@ class Courses_add extends Component {
 
   addCourseContains(e) {
     e.preventDefault()
-    this.setState({
-      courseContains: [...this.state.courseContains, null]
-    })
+    const course = this.state.course
+    course.items = [...course.items, '']
+    this.setState({course})
   }
   onCourseContainsChange(e) {
-    let newContains = this.state.courseContains
+    let newContains = this.state.course.items
     newContains[Number(e.target.name)] = e.target.value
     this.setState({
-      courseContains: newContains
+      course: this.state.course
     })
   }
   deleteOneCourseContains(index) {
     if (index > -1) {
-      this.state.courseContains.splice(index, 1);
+      this.state.course.items.splice(index, 1);
     }
     this.setState({
-      courseContains: this.state.courseContains
+      course: this.state.course
     })
   }
   renderCourseContainsList() {
     let courseContainsList = []
-    for (let i = 0; i < this.state.courseContains.length; i ++) {
+    for (let i = 0; i < this.state.course.items.length; i ++) {
       courseContainsList.push(
         <div className='d-flex' key={i}>
           <div className='col-sm-1'>{i + 1}、</div>
@@ -207,7 +136,7 @@ class Courses_add extends Component {
                     onKeyUp={this.auto_grow.bind(this)}
                     style={{height:'60px'}}
                     onChange={this.onCourseContainsChange.bind(this)}
-                    value={this.state.courseContains[i]}/>
+                    value={this.state.course.items[i]}/>
           <button
             onClick={this.deleteOneCourseContains.bind(this, i)}
             className="btn btn-outline-dark my-2 mx-3 my-sm-2"
@@ -221,113 +150,17 @@ class Courses_add extends Component {
   }
 
   onValueChange(e) {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
+    const course = this.state.course
+    course[e.target.name] = e.target.value
+    this.setState({course})
   }
-  onMapSearch(e) {
-    if (e) {
-      e.preventDefault()
-    }
-    let BMap = window.BMap
-    var map = new BMap.Map("allmap");            // 创建Map实例
-    var point = new BMap.Point(120.102521, 30.26782); // 创建点坐标
-    map.centerAndZoom(point,12);
-    map.enableScrollWheelZoom();                 //启用滚轮放大缩小
-
-    var myGeo = new BMap.Geocoder();
-    // 将地址解析结果显示在地图上,并调整地图视野
-
-    var geoc = new BMap.Geocoder();
-    map.addEventListener("click", (e) => {
-      var pt = e.point;
-      map.clearOverlays();
-      geoc.getLocation(pt, (rs) => {
-        var addComp = rs.addressComponents;
-        let lngLat = this.bd09_To_Gcj02(pt.lng, pt.lat)
-        let lngGcj02 = lngLat['tempLon']
-        let latGcj02 = lngLat['tempLat']
-        this.setState({
-          mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
-          mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
-          mapHasAuto: true,
-          lng: lngGcj02,
-          lat: latGcj02
-        })
-        var point = new BMap.Point(e.point.lng,e.point.lat);
-        map.centerAndZoom(point,16);
-        var marker = new BMap.Marker(point);// 创建标注
-        map.addOverlay(marker);             // 将标注添加到地图中
-        marker.enableDragging();
-        marker.addEventListener("dragend", (e) => {
-          var pt = e.point;
-          let lngLat = this.bd09_To_Gcj02(pt.lng, pt.lat)
-          let lngGcj02 = lngLat['tempLon']
-          let latGcj02 = lngLat['tempLat']
-          geoc.getLocation(pt, (rs) => {
-            var addComp = rs.addressComponents;
-            this.setState({
-              mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
-              mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
-              mapHasAuto: true,
-              lng: lngGcj02,
-              lat: latGcj02
-            })
-          })
-        })
-      });
-    })
-    myGeo.getPoint(this.state.mapSearchCity + this.state.mapSearchAfterCity, (point) => {
-      if (point) {
-        map.centerAndZoom(point, 16);
-        var marker =new BMap.Marker(point);
-        map.addOverlay(marker);
-        marker.enableDragging();
-        let lngLat = this.bd09_To_Gcj02(point.lng, point.lat)
-        let lngGcj02 = lngLat['tempLon']
-        let latGcj02 = lngLat['tempLat']
-        geoc.getLocation(point, (rs) => {
-          var addComp = rs.addressComponents;
-          this.setState({
-            mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
-            mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
-            mapHasAuto: true,
-            lng: lngGcj02,
-            lat: latGcj02
-          })
-        })
-
-        marker.addEventListener("dragend", (e) => {
-            var pt = e.point;
-          let lngLat = this.bd09_To_Gcj02(pt.lng, pt.lat)
-          let lngGcj02 = lngLat['tempLon']
-          let latGcj02 = lngLat['tempLat']
-          geoc.getLocation(pt, (rs) => {
-              var addComp = rs.addressComponents;
-              this.setState({
-                mapSearchCity_mapAuto: addComp.province + ", " + addComp.city,
-                mapSearchAfterCity_mapAuto: addComp.district + ", " + addComp.street + ", " + addComp.streetNumber,
-                mapHasAuto: true,
-                lng: lngGcj02,
-                lat: latGcj02
-              })
-            })
-        })
-      }else{
-        alert("您选择地址没有解析到结果!");
-      }
-    }, this.state.mapSearchCity);
-  }
-  bd09_To_Gcj02(lon, lat) {
-    let x = lon - 0.0065
-    let  y = lat - 0.006
-    let  x_pi = 3.14159265358979324 * 3000.0 / 180.0;
-    let z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi);
-    let theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi);
-    let tempLon = z * Math.cos(theta);
-    let tempLat = z * Math.sin(theta);
-    let gps = {tempLat,tempLon};
-    return gps;
+  onPoiSelected(poi) {
+    const course = this.state.course
+    course.address = poi.address
+    course.poiName = poi.name
+    course.location.coordinates[0] = poi.latLng.lng
+    course.location.coordinates[1] = poi.latLng.lat
+    this.setState({course})
   }
 
   auto_grow(element) {
@@ -339,78 +172,55 @@ class Courses_add extends Component {
     if (e.target.files) {
       for (let i = 0; i < e.target.files.length; i ++) {
         cos.uploadFile(e.target.files[i]).then(response => {
-          this.setState({
-            images: [...this.state.images, 'http://' + response.Location]
-          })
+          const course = this.state.course
+          course.images = [...course.images, 'http://' + response.Location]
+          this.setState({course})
         }).catch(console.error)
       }
     }
   }
   onSubmitAddCourse(e) {
     e.preventDefault()
-    if (e.target.name === 'mapSearchSubmit') {
-      return
-    }
     let hasTag = true
-    this.state.tagIds.forEach((id) => {
+    const course = this.state.course
+    course.tags.forEach((id) => {
       if (id == '') {
         hasTag = false
       }
     })
-    if (this.state.tagIds.length === 0 || hasTag == false) {
+    if (course.tags.length === 0 || hasTag == false) {
       alert('请至少选择一个二级品类。')
       return
     }
 
     let hasImage = true
-    this.state.images.forEach((image) => {
+    course.images.forEach((image) => {
       if (image == '') {
         hasImage = false
       }
     })
-    if (this.state.images.length === 0 || hasImage == false) {
+    if (course.images.length === 0 || hasImage == false) {
       alert('请至少添加一张图片。')
       return
     }
 
-    if (this.state.mapSearchCity == '' || this.state.mapSearchAfterCity == '') {
-      alert('请输入课程地址。')
-      return
-    }
-    if (this.state.lng == null || this.state.lat == null) {
+    if (course.location.coordinates[0] == null || course.location.coordinates[1] == null) {
       alert('请点击地图的搜索按钮，或在地图上标注课程地址，以确认您输入的地址有效，并正确标注在地图上。')
       return
     }
-    if (this.state.title.trim().length == 0
-    || this.state.content.trim().length == 0
-     || (this.state.note && this.state.note.trim().length == 0)) {
-      alert('请勿在任何输入框内输入完全空的内容。')
-      return
-    }
-
-    this.state.courseContains.forEach(courseContainsItem => {
-      if (courseContainsItem && courseContainsItem.trim().length == 0) {
-        alert('请勿在任何输入框内输入完全空的内容。')
-        return
-      }
-    })
 
     if (this.state.edit) {
-      this.props.editCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
-        this.state.content,this.state.courseContains,this.state.mapSearchCity, this.state.lng, this.state.lat,
-        this.state.note,this.state.price, this.state.mapSearchAfterCity, this.props.match.params.id).then(() => this.props.history.push('/courses/'))
+      this.props.editCourse(course, this.props.match.params.id).then(() => this.props.history.push('/courses/'))
       return
     }
-    this.props.addCourse(this.state.images,this.state.title, this.state.categoryIds,this.state.tagIds,this.state.place,this.state.duration,
-      this.state.content,this.state.courseContains,this.state.mapSearchCity, this.state.lng, this.state.lat,
-      this.state.note,this.state.price, this.state.mapSearchAfterCity).then(() => this.props.history.push('/courses/'))
+    this.props.addCourse(course).then(() => this.props.history.push('/courses/'))
   }
   renderImages() {
     let imagesRenderList = []
-    for (let i = 0; i < this.state.images.length; i ++) {
+    for (let i = 0; i < this.state.course.images.length; i ++) {
       imagesRenderList.push(
         <div key={i} className='mt-2 ml-0' >
-        <img style={{width: '500px'}} src={this.state.images[i]} accept="image/*"/>
+        <img style={{width: '500px'}} src={this.state.course.images[i]} accept="image/*"/>
         <button
           onClick={this.deleteOneImage.bind(this, i)}
           className="btn btn-outline-dark my-2 mx-3 my-sm-2"
@@ -423,16 +233,17 @@ class Courses_add extends Component {
   }
   deleteOneImage(index) {
     if (index > -1) {
-      this.state.images.splice(index, 1);
+      this.state.course.images.splice(index, 1);
     }
     this.setState({
-      images: this.state.images
+      course: this.state.course
     })
   }
   render() {
     if (!this.props.authenticated) {
       return <div></div>
     }
+    const course = this.state.course
     return (
       <div className='pageWrap'>
         <Header/>
@@ -448,7 +259,7 @@ class Courses_add extends Component {
                          name='title'
                          onChange={this.onValueChange.bind(this)}
                          maxLength='20'
-                         value={this.state.title}
+                         value={course.title}
                          required
                          autoFocus/>
                   <div className='d-flex align-items-center'>
@@ -487,16 +298,15 @@ class Courses_add extends Component {
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>商圈</label>
                 <div className='col-sm-5'>
-                  <input className="form-control"
-                         value={this.state.place}
-                         onChange={this.onValueChange.bind(this)}
-                                                 name="place" required/></div>
+                  <input className="form-control" value={course.place} onChange={this.onValueChange} name="place" required/>
+                </div>
               </div>
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程时长</label>
-                <div className='col-sm-2 d-flex'><input className="form-control col-sm-10" name='duration' type="number" value={this.state.duration}
-                                                        step="any" onChange={this.onValueChange.bind(this)}/>
+                <div className='col-sm-2 d-flex'>
+                  <input className="form-control col-sm-10" name='duration' type="number" value={course.duration}
+                                                        step="any" onChange={this.onValueChange}/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>小时</div>
                   </div>
@@ -507,7 +317,7 @@ class Courses_add extends Component {
                 <label className='form_label col-sm-2 col-form-label'>课程单价</label>
                 <div className='col-sm-2 d-flex'>
                   <input className="form-control  col-sm-10" name='price' type="number"
-                         value={this.state.price}
+                         value={course.price}
                                                         step="any" onChange={this.onValueChange.bind(this)} required/>
                   <div className='d-flex align-items-center'>
                     <div style={{marginLeft: '5px'}}>元</div>
@@ -519,7 +329,7 @@ class Courses_add extends Component {
                 <label className='form_label col-sm-2 col-form-label'>课程内容</label>
                 <div className='col-sm-5'>
                   <textarea className="form-control" id='courseInfo' name='content'
-                            value={this.state.content}
+                            value={course.content}
                             style={{height: '60px'}}
                             onKeyUp={this.auto_grow.bind(this)}
                             onChange={this.onValueChange.bind(this)}/>
@@ -542,41 +352,19 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>课程地点</label>
-                <div className='col-sm-5'>
-                  <form name='mapSearchSubmit' onSubmit={this.onMapSearch.bind(this)}>
-                    <input className="form-control wrap" value={this.state.mapSearchCity}
-                           onChange={this.onValueChange.bind(this)}
-                           name='mapSearchCity'
-                           placeholder='请输入省份 + 城市名'
-                           value={this.state.mapSearchCity}
-                           required
-                    />
-                    <input className="form-control wrap mt-2" value={this.state.mapSearchAfterCity}
-                           onChange={this.onValueChange.bind(this)}
-                           name='mapSearchAfterCity'
-                           placeholder='请输入详细地址，不用包含省市名'
-                           value={this.state.mapSearchAfterCity}
-                           required/>
-                    <div className='d-flex flex-column'>
-                      {this.state.mapHasAuto &&
-                      <div style={{textAlign: 'left'}}>{'提醒：地图搜索得出的地址信息为：\"' +
-                      this.state.mapSearchCity_mapAuto + '-' + this.state.mapSearchAfterCity_mapAuto
-                      + '\"， 请确认您输入的地址。如无误，请继续。'}</div>
-                      }
-                      <button type='submit' className="btn btn-outline-dark my-2 mx-0 my-sm-2"
-                              style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}>搜索该地址
-                      </button>
-                    </div>
-                  </form>
-                  <div id="allmap" style={{height: '400px'}}>
-                  </div>
+                <div className='col-sm-10' style={{textAlign: 'left'}}>
+                  POI: <input className="form-control" name="poiName" value={course.poiName} onChange={this.onValueChange}/>
+                  具体地址: <input className="form-control" name="address" value={course.address} onChange={this.onValueChange}/>
+                  经纬度: <input className="form-control" value={course.location.coordinates.join(',')} disabled={true} />
+                  请使用地图搜索获取准确的地址和坐标，地址可以手动编辑，坐标只能通过地图获取：
+                  <TcMap onPoiClick={this.onPoiSelected}/>
                 </div>
               </div>
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>备注</label>
                 <div className='col-sm-5'>
-                  <textarea className="form-control" id='otherInfo' name='note' value={this.state.note}
+                  <textarea className="form-control" id='otherInfo' name='note' value={course.note}
                             onKeyUp={this.auto_grow.bind(this)}
                             style={{height: '60px'}}
                             onChange={this.onValueChange.bind(this)}/>

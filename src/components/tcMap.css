@@ -1,0 +1,12 @@
+.tcMap-container {
+    display:flex;
+}
+.tcMap-poi-list {
+    flex: 1 1 auto;
+    overflow: scroll;
+    height: 400px;
+}
+.tcMap-map {
+    width: 500px;
+    height: 400px;
+}
