@@ -19,7 +19,6 @@
     "babel-preset-react": "^6.24.1",
     "cos-js-sdk-v5": "^0.4.7",
     "html-webpack-plugin": "^2.30.1",
-    "lodash": "^4.17.10",
     "md5": "^2.2.1",
     "moment": "^2.19.1",
     "react": "^15.6.1",
@@ -39,6 +38,7 @@
     "css-loader": "^0.28.11",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.3",
-    "style-loader": "^0.21.0"
+    "style-loader": "^0.21.0",
+    "webpack-bundle-size-analyzer": "^2.7.0"
   }
 }

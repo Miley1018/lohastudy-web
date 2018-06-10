@@ -1,5 +1,5 @@
 import {FETCH_COURSES, FETCH_COURSE_TAGS, FETCH_COURSE} from '../actions/types';
-import _ from 'lodash'
+import _ from '../utils/common'
 
 let initState = {
   courses: {},

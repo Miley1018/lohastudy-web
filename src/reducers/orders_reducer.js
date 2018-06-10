@@ -1,5 +1,5 @@
 import {FETCH_ORDERS} from '../actions/types';
-import _ from 'lodash'
+import _ from '../utils/common'
 
 let initState = {
   orders: {}
