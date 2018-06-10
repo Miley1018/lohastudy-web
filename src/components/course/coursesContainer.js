@@ -3,11 +3,11 @@ import {connect} from 'react-redux'
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-import Footer from './footer'
-import Header from './header'
+import Footer from '../footer'
+import Header from '../header'
 
 import makeCoursesItems from './makeCoursesItems.js'
-import {fetchCourses, deleteCourse} from '../actions/courses'
+import {fetchCourses, deleteCourse} from '../../actions/courses'
 
 class CoursesContainer extends React.Component {
   constructor(props) {

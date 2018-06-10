@@ -27,9 +27,9 @@ import Signin from './components/signin.js'
 import OrdersContainer from './components/ordersContainer.js'
 import CategoriesContainer from './components/categoriesContainer.js'
 import TagsContainer from './components/tagsContainer.js'
-import CoursesContainer from './components/coursesContainer.js'
+import CoursesContainer from './components/course/coursesContainer.js'
 import UsersContainer from './components/usersContainer.js'
-import Courses_add from './components/courses_add.js'
+import Courses_add from './components/course/courses_add.js'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(persistedReducer, /* preloadedState, */ composeEnhancers(applyMiddleware(reduxThunk)))

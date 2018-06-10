@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {editCourse,fetchCourseTags, addCourse, fetchCourse} from '../actions/courses';
-import Footer from './footer'
-import Header from './header'
-import cos from '../utils/upload'
-import TcMap from './tcMap'
+import {editCourse,fetchCourseTags, addCourse, fetchCourse} from '../../actions/courses';
+import Footer from '../footer'
+import Header from '../header'
+import cos from '../../utils/upload'
+import TcMap from '../tcMap'
+import Tags from './tags'
 
 class Courses_add extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Courses_add extends Component {
     }
     this.onPoiSelected = this.onPoiSelected.bind(this)
     this.onValueChange = this.onValueChange.bind(this)
+    this.onTagsChanged = this.onTagsChanged.bind(this)
   }
   componentWillMount() {
     this.props.fetchCourseTags()
@@ -41,68 +43,11 @@ class Courses_add extends Component {
       edit: true
     })
   }
-  addTagsSelection(e) {
-    e.preventDefault()
-    if (this.props.tags && Object.keys(this.props.tags) && Object.keys(this.props.tags).length !== 0) {
-      let key1 = Object.keys(this.props.tags)[0]
-      const course = this.state.course
-      course.tags = [...course.tags, this.props.tags[key1]['id']];
-      course.categories = [...course.categories, this.props.tags[key1]['category']]
-      this.setState({course})
-    }
-  }
-  onSelectChange(e) {
-    let ids = e.target.value.split('/')
-    let categoryIds = this.state.course.categories
-    let tagIds = this.state.course.tags
-    categoryIds[Number(e.target.name)] = ids[0]
-    tagIds[Number(e.target.name)] = ids[1]
-    this.setState({course: this.state.course})
-  }
-  renderTagsSelectionList() {
-    let tagsSelectionList = []
-    for (let i = 0; i < this.state.course.tags.length; i ++) {
-      tagsSelectionList.push(
-        <div className='d-flex' key={i}>
-          <select id="tagsSelect" className="form-control col-sm-8 mt-2"
-                  name={i}
-                  onChange={this.onSelectChange.bind(this)}
-                  style={{textAlignLast: 'center'}}>
-            {this.renderTagsSelection(this.state.course.tags[i])}
-          </select>
-          <button
-            onClick={this.deleteOneTagsSelection.bind(this, i)}
-            className="btn btn-outline-dark my-2 mx-3 my-sm-2"
-            type="button"
-            style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}
-          >删除</button>
-        </div>
-      )
-    }
-    return tagsSelectionList
-  }
-  deleteOneTagsSelection(index) {
+  onTagsChanged(tagIds, categoryIds){
     const course = this.state.course
-    if (index > -1) {
-      course.categories.splice(index, 1);
-      course.tags.splice(index, 1);
-    }
+    course.tags = tagIds
+    course.categories = categoryIds
     this.setState({course})
-  }
-  renderTagsSelection(selectedTagId) {
-    let tagsList = []
-    if (this.props.tags && Object.keys(this.props.tags) && Object.keys(this.props.tags).length !== 0) {
-      for (let key in this.props.tags) {
-        tagsList.push(
-          <option key={key}
-                  selected={selectedTagId == key ?  true: false}
-                  value={this.props.tags[key].category+ '/' +this.props.tags[key].id}>
-            {this.props.tags[key].name}
-          </option>
-        )
-      }
-    }
-    return tagsList
   }
 
   addCourseContains(e) {
@@ -270,13 +215,8 @@ class Courses_add extends Component {
 
               <div className='form-group row'>
                 <label className='form_label col-sm-2 col-form-label'>品类</label>
-                <div className='col-sm-2 d-flex flex-column'>
-                  {this.renderTagsSelectionList()}
-                  <button onClick={this.addTagsSelection.bind(this)}
-                          className="btn btn-outline-dark my-2 mx-0 my-sm-2"
-                          type="button"
-                          style={{borderColor: '#5a5a5a', color: '#5a5a5a', width: '150px'}}>添加品类
-                  </button>
+                <div className='col-sm-6 d-flex flex-column'>
+                  <Tags tags={this.state.course.tags} onTagsChanged={this.onTagsChanged}/>
                 </div>
               </div>
 
