@@ -1,5 +1,6 @@
-const userConstructor = (user) => {
+const userConstructor = (user, index) => {
   return {
+    index: index,
     id: user['id'],
     openId:user['openid'],
     name: user['username'],
@@ -13,8 +14,11 @@ const userConstructor = (user) => {
 
 export default function makeUsersItems(users) {
   let usersRows = []
+  let index = 1
   for (let key in users) {
-    usersRows.push(userConstructor(users[key]))
+    if (users[key].scope != 'admin') {
+      usersRows.push(userConstructor(users[key], index++))
+    }
   }
   return usersRows
 }
