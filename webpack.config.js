@@ -16,11 +16,7 @@ module.exports = function () {
       rules: [
         {
           test: /\.(js|jsx)?$/,
-          exclude: /node_modules\/(?!ypling-material-ui\/).*/,
           loader: 'babel-loader',
-          options: {
-            presets: ['react', 'babel-preset-env', 'stage-0']
-          }
         },
         {
           test: /\.(scss|css)$/,

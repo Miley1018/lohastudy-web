@@ -9,11 +9,6 @@ import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import { PersistGate } from 'redux-persist/integration/react'
 
-import Immutable from "immutable";
-
-import installDevTools from "immutable-devtools";
-installDevTools(Immutable);
-
 const persistConfig = {
     key: 'root',
     whitelist: ['auth'],
