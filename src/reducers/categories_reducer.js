@@ -1,4 +1,5 @@
 import {FETCH_CATEGORIES} from "../actions/types";
+import _ from '../utils/common'
 
 let initState = {
   categories: {}
