@@ -195,7 +195,7 @@ class CategoriesContainer extends React.Component {
                   <div className='d-flex flex-column'>
                     <div className='d-flex'>
                       <div id="hide" className="col-sm-5 ml-0">
-                        <label>添加图片
+                        <label>{this.state.image ? '更换图片':'添加图片'}
                           <input type="file" id="file" name="file"
                                  accept=".jpg, .jpeg, .png, .gif"
                                  onChange={this.onImagesChange.bind(this)}/>
