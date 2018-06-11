@@ -1,10 +1,8 @@
 const courseConstructor = (course) => {
   let belong = ''
-  if (course['categories'] !== null && course['categories'].length >= 1 ) {
-    belong = course['categories'][0]['name'] + ' - '
-  }
+  const categories = course.categories
   if (course['tags'] !== null && course['tags'].length >= 1) {
-    belong += course['tags'][0]['name']
+    belong = course.tags.map((tag,i)=>(categories[i]&&categories[i].name) + ' - '+tag.name).join(',')
   }
   return {
     id: course['id'],
