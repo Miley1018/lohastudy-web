@@ -35,7 +35,7 @@ export default {
       cos.sliceUploadFile({
         Bucket: Bucket,
         Region: Region,
-        Key: new Date().valueOf() + '-' + file.name,
+        Key: new Date().valueOf() + '-' + Math.floor(Math.random() *1000) + '-' + file.name,
         Body: file,
       }, function (err, data) {
         if (err) {
