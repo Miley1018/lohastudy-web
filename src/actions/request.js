@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-let host = 'https://lohastudy.com/dev/api'
+let host = 'https://lohastudy.com/prod/api'
 export function requestWithToken(url, method, content) {
     return axios(
         {

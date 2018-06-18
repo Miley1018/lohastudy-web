@@ -10,7 +10,7 @@ const cos = new COS({
     const method = (options.Method || 'get').toLowerCase()
     const pathname = '/' + (options.Key || '')
     axios({
-      url:'https://lohastudy.com/dev/api/cos/auth',
+      url:'https://lohastudy.com/prod/api/cos/auth',
       headers: {
         Authorization: 'Bearer '+localStorage.getItem('token')},
       params:{

@@ -2,7 +2,7 @@ import axios from 'axios';
 import {AUTH_USER,UNAUTH_USER,AUTH_SIGNINERROR} from './types';
 
 
-const ROOT_URL='https://lohastudy.com/dev/api';
+const ROOT_URL='https://lohastudy.com/prod/api';
 
 export function signin(email, password){
     return function(dispatch) {
