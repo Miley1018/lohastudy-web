@@ -30,6 +30,7 @@ import TagsContainer from './components/tagsContainer.js'
 import CoursesContainer from './components/course/coursesContainer.js'
 import UsersContainer from './components/usersContainer.js'
 import Courses_add from './components/course/courses_add.js'
+import AppConfig from './components/appconfig/appconfig'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(persistedReducer, /* preloadedState, */ composeEnhancers(applyMiddleware(reduxThunk)))
@@ -49,6 +50,7 @@ ReactDOM.render(
                 <Route exact path='/courses/add' component={Courses_add} />
                 <Route path='/courses/add/:id' component={Courses_add} />
                 <Route path='/users' component={UsersContainer} />
+                <Route path='/appconfig' component={AppConfig} />
             </div>
         </Router>
         </PersistGate>

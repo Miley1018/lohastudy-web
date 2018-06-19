@@ -48,6 +48,9 @@ class Header extends React.Component{
                           <li className="nav-item active ml-2">
                             <a className="nav-link" href="/users">用户管理</a>
                           </li>
+                          <li className="nav-item active ml-2">
+                            <a className="nav-link" href="/appconfig">Banner管理</a>
+                          </li>
 
                         </ul>
 
