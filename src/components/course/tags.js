@@ -14,14 +14,19 @@ class Tags extends Component {
     let tagsList = []
     for (let key in this.props.allTags) {
       const tag = this.props.allTags[key]
-      tagsList.push(
-        <option key={key}
-                value={tag.id}>
-          {this.props.allCategories[tag.category] && this.props.allCategories[tag.category].name} - {this.props.allTags[key].name}
-        </option>
-      )
+      const item = {
+        id: tag.id,
+        categoryName: this.props.allCategories[tag.category] && this.props.allCategories[tag.category].name,
+        tagName: tag.name,
+      }
+      tagsList.push(item)
     }
-    return tagsList
+    tagsList.sort((a,b)=>(a.categoryName+a.tagName).localeCompare(b.categoryName+b.tagName, 'zh-Hans-CN', {sensitivity: 'accent'}))
+    return tagsList.map(item=>(
+      <option key={item.id}
+              value={item.id}>
+        {item.categoryName} - {item.tagName}
+      </option>))
   }
   componentWillMount() {
     this.props.fetchCourseTags()
