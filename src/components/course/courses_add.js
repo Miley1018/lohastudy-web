@@ -203,7 +203,7 @@ class Courses_add extends Component {
                   <input className="form-control col-sm-10"
                          name='title'
                          onChange={this.onValueChange.bind(this)}
-                         maxLength='20'
+                         maxLength='30'
                          value={course.title}
                          required
                          autoFocus/>
