@@ -2,11 +2,11 @@ import axios from 'axios';
 import {AUTH_USER,UNAUTH_USER,AUTH_SIGNINERROR} from './types';
 
 
-const ROOT_URL='https://lohastudy.com/prod/api';
+import CONFIG from '../config'
 
 export function signin(email, password){
     return function(dispatch) {
-      return axios.post(`${ROOT_URL}//users/login`, {user: {email: email, password: password}})
+      return axios.post(`${CONFIG.apiHost}//users/login`, {user: {email: email, password: password}})
         .then(response => {
           localStorage.setItem('token', response.data.user.token);
           dispatch({type: AUTH_USER});

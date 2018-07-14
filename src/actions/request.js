@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-let host = 'https://lohastudy.com/prod/api'
+import CONFIG from '../config'
+const host = CONFIG.apiHost
 export function requestWithToken(url, method, content) {
   const config = {
     url: host + url,

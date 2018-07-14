@@ -30,9 +30,7 @@ module.exports = function () {
     plugins: [
       new HtmlWebpackPlugin({ template: './index.html' }),
       new webpack.DefinePlugin({
-        'process.env': {
-          "NODE_ENV": JSON.stringify("development"),
-        }
+        LOHA_ENV: JSON.stringify(process.env.NODE_ENV),
       }),
     ],
     devServer: {
