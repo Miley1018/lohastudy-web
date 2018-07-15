@@ -31,7 +31,7 @@ class CoursesContainer extends React.Component {
       this.props.history.push('/signin')
       return
     }
-    this.props.fetchCourses()
+    this.props.fetchCourses(this.state.search)
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -82,10 +82,19 @@ class CoursesContainer extends React.Component {
           <img alt='course_pic' src={row.row.pic}/>
         )
       },
+      {
+        Header: "在线状态",
+        accessor: "isOnline",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer',
+        Cell: row => (
+          <span>{row.row.isOnline ? '已上线' : '已下线'}</span>
+        )
+      },
       {   Header: "操作",
         accessor: "operation",
-        className: 'columnCell twentyPer',
-        headerClassName: 'columnCell twentyPer',
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer',
         Cell: row => {
           return (<div>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={(() => {this.props.history.push('/courses/add/' + row.original.id)}).bind(this)}>编辑</button>

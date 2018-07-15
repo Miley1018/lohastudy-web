@@ -6,6 +6,8 @@ import Header from '../header'
 import cos from '../../utils/upload'
 import TcMap from '../tcMap'
 import Tags from './tags'
+import DatePicker from 'react-datepicker'
+import moment from 'moment';
 
 class Courses_add extends Component {
   constructor(props) {
@@ -42,6 +44,11 @@ class Courses_add extends Component {
       },
       edit: true
     })
+  }
+  setCourseField(key, value) {
+    const course = this.state.course
+    course[key] = value
+    this.setState({course})
   }
   onTagsChanged(tagIds, categoryIds){
     const course = this.state.course
@@ -308,6 +315,21 @@ class Courses_add extends Component {
                             onKeyUp={this.auto_grow.bind(this)}
                             style={{height: '60px'}}
                             onChange={this.onValueChange.bind(this)}/>
+                </div>
+              </div>
+              <div className='form-group row'>
+                <label className='form_label col-sm-2 col-form-label'>有效期</label>
+                <div className='col-sm-5'>
+                  上线时间
+                  <DatePicker
+                    selected={course.onlineStartDate?moment(course.onlineStartDate):undefined}
+                    onChange={(date)=>this.setCourseField('onlineStartDate', date)}
+                  />
+                  下线时间
+                  <DatePicker
+                    selected={course.onlineEndDate?moment(course.onlineEndDate):undefined}
+                    onChange={(date)=>this.setCourseField('onlineEndDate', date)}
+                  />
                 </div>
               </div>
 
