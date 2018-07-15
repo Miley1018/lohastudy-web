@@ -161,6 +161,16 @@ class Courses_add extends Component {
       return
     }
 
+    if (!course.onlineStartDate || !course.onlineEndDate) {
+      alert('请填写有效期')
+      return
+    }
+
+    if (new Date(course.onlineStartDate) > new Date(course.onlineEndDate)) {
+      alert('有效期开始日期不能在结束日期之后')
+      return
+    }
+
     if (this.state.edit) {
       this.props.editCourse(course, this.props.match.params.id).then(() => this.props.history.push('/courses/'))
       return
