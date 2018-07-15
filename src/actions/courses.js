@@ -1,9 +1,13 @@
 import {FETCH_COURSES, FETCH_COURSE_TAGS,FETCH_COURSE} from './types';
 import {request,requestWithToken} from "./request.js";
 
-export function fetchCourses() {
+export function fetchCourses(options) {
+  const _options = {
+    ...options,
+    limit: 10000
+  }
   return (dispatch) => {
-    return request('/courses', 'GET',  {"limit":"10000"})
+    return request('/courses', 'GET',  _options)
       .then((response) => {
         dispatch({
           type: FETCH_COURSES,
