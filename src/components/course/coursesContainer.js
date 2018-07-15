@@ -5,6 +5,8 @@ import "react-table/react-table.css";
 
 import Footer from '../footer'
 import Header from '../header'
+import CategoryList from '../common/CategoryList'
+import TagList from '../common/TagList'
 
 import makeCoursesItems from './makeCoursesItems.js'
 import {fetchCourses, deleteCourse} from '../../actions/courses'
@@ -37,8 +39,11 @@ class CoursesContainer extends React.Component {
     })
   }
   searchInputsChanged(e) {
+    this.setSearchField(e.target.name, e.target.value)
+  }
+  setSearchField(key, value) {
     const searchState = this.state.search
-    searchState[e.target.name] = e.target.value
+    searchState[key] = value
     console.log(searchState)
     this.setState({search: searchState})
   }
@@ -109,8 +114,8 @@ class CoursesContainer extends React.Component {
             <div>组合搜索：</div>
             <div>名称：<input value={searchState.title} name="title" onChange={this.searchInputsChanged}/></div>
             <div>
-              一级品类：<input value={searchState.categories} name="categories" onChange={this.searchInputsChanged}/>
-              二级品类：<input value={searchState.tags} name="tags" onChange={this.searchInputsChanged}/></div>
+              一级品类：<CategoryList value={searchState.categories} onChange={(v)=>{this.setSearchField('categories', v);this.setSearchField('tags', '')}}/>
+              二级品类：<TagList category={searchState.categories} value={searchState.tags} onChange={(v)=>this.setSearchField('tags', v)}/></div>
             <div>在线状态：<select value={searchState.onlineState} name="onlineState" onChange={this.searchInputsChanged}>
               <option value="online">在线</option>
               <option value="offline">下线</option>
