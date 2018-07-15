@@ -9,13 +9,14 @@ import CategoryList from '../common/CategoryList'
 import TagList from '../common/TagList'
 
 import makeCoursesItems from './makeCoursesItems.js'
-import {fetchCourses, deleteCourse} from '../../actions/courses'
+import {fetchCourses, editCourse} from '../../actions/courses'
 
 class CoursesContainer extends React.Component {
   constructor(props) {
     super(props)
     this.searchInputsChanged = this.searchInputsChanged.bind(this)
     this.search = this.search.bind(this)
+    this.changeOnlineState = this.changeOnlineState.bind(this)
     this.state = {
       tableData: [],
       search: {
@@ -31,7 +32,7 @@ class CoursesContainer extends React.Component {
       this.props.history.push('/signin')
       return
     }
-    this.props.fetchCourses(this.state.search)
+    this.fetchCourses()
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -44,11 +45,36 @@ class CoursesContainer extends React.Component {
   setSearchField(key, value) {
     const searchState = this.state.search
     searchState[key] = value
-    console.log(searchState)
     this.setState({search: searchState})
   }
   search() {
+    this.fetchCourses()
+  }
+  fetchCourses() {
     this.props.fetchCourses(this.state.search)
+  }
+  changeOnlineState(id, isOnline) {
+    const course = this.props.courses[id]
+    if (isOnline) {
+      let isDateValid = true
+      const now = new Date()
+      if (course.onlineStartDate && new Date(course.onlineStartDate) < now) {
+        isDateValid = false
+      }
+      if (course.onlineEndDate && new Date(course.onlineEndDate) >= now) {
+        isDateValid = false
+      }
+      const confirmText = isDateValid ? `是否确认上线课程：${course.title}` : '当前日期不在有效期内，是否继续上线？'
+      if (confirm(confirmText)) {
+        this.props.editCourse({'isManualOffline': false}, course.id).then(() => this.fetchCourses())
+      }
+    }
+     else {
+      const confirmValue = confirm(`是否确认下线课程: ${course.title}?`)
+      if (confirmValue) {
+        this.props.editCourse({'isManualOffline': true}, course.id).then(() => this.fetchCourses())
+      }
+    }
   }
   addNew() {
     this.props.history.push('/courses/add')
@@ -99,13 +125,8 @@ class CoursesContainer extends React.Component {
           return (<div>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0' onClick={(() => {this.props.history.push('/courses/add/' + row.original.id)}).bind(this)}>编辑</button>
             <button className='btn btn-outline-success my-2 mx-2 my-sm-0'
-                    onClick={() => {
-                      const confirmValue = confirm('确认删除该课程？* 课程id：' + row.original.id)
-                      if (confirmValue) {
-                        this.props.deleteCourse(row.original.id).then(() => this.props.fetchCourses())
-                      }
-                     }} >
-              删除</button>
+                    onClick={() => this.changeOnlineState(row.row.id, !row.row.isOnline)} >
+              {row.row.isOnline ? '下线' : '上线'}</button>
           </div>)
         }
       }
@@ -158,4 +179,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {fetchCourses, deleteCourse})(CoursesContainer)
+export default connect(mapStateToProps, {fetchCourses, editCourse})(CoursesContainer)
