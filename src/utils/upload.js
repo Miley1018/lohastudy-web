@@ -1,5 +1,6 @@
 import COS from 'cos-js-sdk-v5'
 import axios from 'axios'
+import CONFIG from '../config'
 const Bucket = 'lohastudy-1256370191'
 const Region = 'ap-guangzhou';
 
@@ -10,7 +11,7 @@ const cos = new COS({
     const method = (options.Method || 'get').toLowerCase()
     const pathname = '/' + (options.Key || '')
     axios({
-      url:'https://lohastudy.com/prod/api/cos/auth',
+      url:CONFIG.apiHost + '/cos/auth',
       headers: {
         Authorization: 'Bearer '+localStorage.getItem('token')},
       params:{
