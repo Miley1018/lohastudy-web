@@ -31,6 +31,7 @@ module.exports = function () {
       new HtmlWebpackPlugin({ template: './index.html' }),
       new webpack.DefinePlugin({
         LOHA_ENV: JSON.stringify(process.env.NODE_ENV),
+        'process.env.NODE_ENV': JSON.stringify('production'),
       }),
     ],
     devServer: {
