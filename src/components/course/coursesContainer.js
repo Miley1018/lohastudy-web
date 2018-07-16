@@ -105,7 +105,7 @@ class CoursesContainer extends React.Component {
         className: 'columnCell thirtyPer',
         headerClassName: 'columnCell thirtyPer',
         Cell: row => (
-          <img alt='course_pic' src={row.row.pic}/>
+          <img alt='course_pic' height={200} src={row.row.pic}/>
         )
       },
       {
