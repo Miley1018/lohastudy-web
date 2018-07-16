@@ -16,7 +16,10 @@ const orderConstructor = (order) => {
 export default function makeOrdersItems(orders) {
   let ordersRows = []
   for (let key in orders) {
-    ordersRows.push(orderConstructor(orders[key]))
+    const order = orders[key]
+    if (order['user']) {
+      ordersRows.push(orderConstructor(order))
+    }
   }
   return ordersRows
 }
