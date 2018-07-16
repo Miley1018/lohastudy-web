@@ -139,19 +139,23 @@ class CoursesContainer extends React.Component {
         <div className='flexGrow'>
           <h3 style={{textAlign: 'left', margin: '15px 25px'}}>课程管理</h3>
           <hr className="style-two" />
-          <div className='d-flex ' style={{marginLeft:'25px', marginBottom:'30px'}}><button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button></div>
-          <div className="text-left">
-            <div>组合搜索：</div>
-            <div>名称：<input value={searchState.title} name="title" onChange={this.searchInputsChanged}/></div>
-            <div>
+          <div className='d-flex flex-row'>
+            <div className='d-flex' style={{marginLeft:'25px', marginBottom:'30px', marginRight: '25px'}}>
+              <button onClick={this.addNew.bind(this)} className='btn themeButton'>&nbsp; &nbsp;&nbsp;+ 新增&nbsp;&nbsp;&nbsp;&nbsp; </button>
+            </div>
+            <div className="text-left flexGrow">
+              <div>组合搜索：</div>
+              名称：<input value={searchState.title} name="title" onChange={this.searchInputsChanged}/>
               一级品类：<CategoryList value={searchState.categories} onChange={(v)=>{this.setSearchField('categories', v);this.setSearchField('tags', '')}}/>
-              二级品类：<TagList category={searchState.categories} value={searchState.tags} onChange={(v)=>this.setSearchField('tags', v)}/></div>
-            <div>在线状态：<select value={searchState.onlineState} name="onlineState" onChange={this.searchInputsChanged}>
-              <option value="online">在线</option>
-              <option value="offline">下线</option>
-            </select></div>
-            <div><button type="button" onClick={this.search}>搜索</button></div>
+              二级品类：<TagList category={searchState.categories} value={searchState.tags} onChange={(v)=>this.setSearchField('tags', v)}/>
+              在线状态：
+              <select value={searchState.onlineState} name="onlineState" onChange={this.searchInputsChanged}>
+                <option value="online">在线</option>
+                <option value="offline">下线</option>
+              </select>
+              <button type="button" className="btn btn-primary" onClick={this.search}>搜索</button>
 
+            </div>
           </div>
           <ReactTable
             data={this.state.tableData}
