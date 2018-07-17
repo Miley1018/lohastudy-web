@@ -1,7 +1,7 @@
 import moment from 'moment'
 
 const orderConstructor = (order) => {
-  const courseDate = order['courseDate'] && (moment(order['courseDate']).format('YYYY/MM/DD HH:mm:ss'))
+  const courseDate = order['courseDate'] && (moment(order['courseDate']).format('YYYY/MM/DD HH:mm'))
   return {
     id: order['id'],
     status: order['status'] == 'pending' ? '预约确认中' :
