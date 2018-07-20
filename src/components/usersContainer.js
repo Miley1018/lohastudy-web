@@ -63,7 +63,7 @@ class UsersContainer extends React.Component {
         className: 'columnCell twentyPer',
         headerClassName: 'columnCell twentyPer',
         Cell: row => (
-          <img alt='user_pic' src={row.row.avatar}/>
+          row.row.avatar ? <img alt='user_pic' src={row.row.avatar}/> : <div></div>
         )
       },
     ]
