@@ -8,6 +8,7 @@ import TcMap from '../tcMap'
 import Tags from './tags'
 import DatePicker from 'react-datepicker'
 import moment from 'moment';
+import cropImage from '../common/cropImage'
 
 class Courses_add extends Component {
   constructor(props) {
@@ -23,6 +24,7 @@ class Courses_add extends Component {
             0,//lat
           ]}
       },
+      originalShareImage: '',
       edit: false
     }
     this.onPoiSelected = this.onPoiSelected.bind(this)
@@ -35,15 +37,17 @@ class Courses_add extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    nextProps.course &&
-    this.setState({
-      course: {
-        ...nextProps.course,
-        tags: nextProps.course.tags.map(t=>t.id),
-        categories: nextProps.course.categories.map(c=>c.id),
-      },
-      edit: true
-    })
+    if (nextProps.course) {
+      this.setState({
+        originalShareImage: nextProps.course.images[0],
+        course: {
+          ...nextProps.course,
+          tags: nextProps.course.tags.map(t=>t.id),
+          categories: nextProps.course.categories.map(c=>c.id),
+        },
+        edit: true
+      }, ()=>this.generateShareImage())
+    }
   }
   setCourseField(key, value) {
     const course = this.state.course
@@ -120,13 +124,35 @@ class Courses_add extends Component {
     element.target.style.height = 'auto';
     element.target.style.height = (element.target.scrollHeight > row ? element.target.scrollHeight : row) + "px";
   }
+  generateShareImage() {
+    // 头图换了，或者原始shareImage为空
+    const images = this.state.course.images
+    if (this.state.course.shareImageUrl && images[0] == this.state.originalShareImage) {
+      return
+    }
+
+    if (images.length > 0) {
+      const originalShareImage = images[0]
+      cropImage(originalShareImage, 5.0/4).then(blob=>{
+        blob.name = 'share_image.jpg'
+        cos.uploadFile(blob).then(response => {
+          const course = this.state.course
+          course.shareImageUrl = 'http://' + response.Location
+          this.setState({
+            originalShareImage,
+            course
+          })
+        })
+      })
+    }
+  }
   onImagesChange(e) {
     if (e.target.files) {
       for (let i = 0; i < e.target.files.length; i ++) {
         cos.uploadFile(e.target.files[i]).then(response => {
           const course = this.state.course
           course.images = [...course.images, 'http://' + response.Location]
-          this.setState({course})
+          this.setState({course}, ()=>this.generateShareImage())
         }).catch(console.error)
       }
     }
@@ -199,7 +225,7 @@ class Courses_add extends Component {
     }
     this.setState({
       course: this.state.course
-    })
+    }, ()=>this.generateShareImage())
   }
   render() {
     if (!this.props.authenticated) {
@@ -234,6 +260,14 @@ class Courses_add extends Component {
                 <label className='form_label col-sm-2 col-form-label'>品类</label>
                 <div className='col-sm-6 d-flex flex-column'>
                   <Tags tags={this.state.course.tags} onTagsChanged={this.onTagsChanged}/>
+                </div>
+              </div>
+
+              <div className='form-group row'>
+                <label className='form_label col-sm-2 col-form-label'>分享图片</label>
+                <div className='col-sm-6 d-flex flex-column'>
+                  自动由头图生成
+                  {course.shareImageUrl && <img width={250} height={200} src={course.shareImageUrl}/>}
                 </div>
               </div>
 
