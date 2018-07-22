@@ -15,8 +15,9 @@ import makeOrdersItems from "./makeOrdersItems";
 class OrdersContainer extends React.Component {
   constructor(props) {
     super(props)
+    this.tableData = []
     this.state = {
-      tableData: [],
+      selectState: 'pending',
       editOrder: false,
       thisOrderId: '',
       courseId: '',
@@ -42,28 +43,31 @@ class OrdersContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps)
-    this.setState({
-      tableData: makeOrdersItems(nextProps.orders)
-    })
+    this.generateTableData(nextProps.orders, this.state.selectState)
   }
 
   onSelectStatusChange(e) {
-    if (e.target.value == 'all') {
-      this.setState({
-        tableData: makeOrdersItems(this.props.orders)
-      })
-      return
-    }
-    const filteredOrders = {}
-    for (let key in this.props.orders) {
-      if (this.props.orders[key].status == e.target.value) {
-        filteredOrders[key] = this.props.orders[key]
-      }
-    }
+    this.generateTableData(this.props.orders, e.target.value)
     this.setState({
-      tableData: makeOrdersItems(filteredOrders)
+      selectState: e.target.value
     })
+  }
+  generateTableData(orders, state) {
+    if (state === 'all') {
+      this.setState({
+        tableData: makeOrdersItems(orders)
+      })
+    } else {
+      const filteredOrders = {}
+      for (let key in orders) {
+        if (orders[key].status == state) {
+          filteredOrders[key] = orders[key]
+        }
+      }
+      this.setState({
+        tableData: makeOrdersItems(filteredOrders)
+      })
+    }
   }
   cancelEdit() {
     this.setState({
@@ -312,7 +316,7 @@ class OrdersContainer extends React.Component {
           <hr className="style-two" />
           <div className='d-flex ' style={{marginLeft:'25px', marginBottom:'30px'}}>
             <div style={{textAlign:'left'}}>预约状态</div>
-            <select className='ml-3' onChange={this.onSelectStatusChange.bind(this)}>
+            <select className='ml-3' onChange={this.onSelectStatusChange.bind(this)} value={this.state.selectState}>
               <option value='all'>全部</option>
               <option value='pending'>预约确认中</option>
               <option value='confirmed'>预约成功</option>
