@@ -11,7 +11,7 @@ const orderConstructor = (order) => {
     phoneNumber: order['user']['phoneNumber'],
     nickname: order['user']['nickname'],
     title: order['course']['title'],
-    createdAt: order['createdAt'],
+    createdAt: moment(order['createdAt']).format('YYYY/MM/DD HH:mm'),
     operation: ''
   };
 };
