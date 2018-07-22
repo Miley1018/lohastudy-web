@@ -35,6 +35,10 @@ class CoursesContainer extends React.Component {
     this.fetchCourses()
   }
   componentWillReceiveProps(nextProps) {
+    if (nextProps.match.isExact && !this.props.match.isExact) {
+      // Shows this page, needs to update the data.
+      this.fetchCourses()
+    }
     this.setState({
       tableData: makeCoursesItems(nextProps.courses)
     })
@@ -134,7 +138,7 @@ class CoursesContainer extends React.Component {
     let height = screen.height * 0.77 + 'px'
     const searchState = this.state.search
     return (
-      <div className='pageWrap' >
+      <div className='pageWrap' style={{display: this.props.match.isExact ? 'block':'none'}}>
         <Header />
         <div className='flexGrow'>
           <h3 style={{textAlign: 'left', margin: '15px 25px'}}>课程管理</h3>
