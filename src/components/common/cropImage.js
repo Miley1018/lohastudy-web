@@ -33,7 +33,7 @@ export default function corpImage(url, ratio) {
       context.drawImage(img, rect.x, rect.y,rect.width,rect.height,0,0,rect.width, rect.height);
       canvas.toBlob(function(blob) {
         resolve(blob)
-      }, 'image/png', 90);
+      }, 'image/jpeg', 90);
     };
     img.src = url + '?_' // add ?_ to skip the disk cache https://stackoverflow.com/questions/12648809/cors-policy-on-cached-image
   });
