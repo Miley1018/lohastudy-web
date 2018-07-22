@@ -35,8 +35,8 @@ class UsersContainer extends React.Component {
     const columns = [
       {   Header: "序号",
         accessor: "index",
-        className: 'columnCell tenPer',
-        headerClassName: 'columnCell tenPer'
+        className: 'columnCell fivePer',
+        headerClassName: 'columnCell fivePer'
       },
       {   Header: "ID",
         accessor: "id",
@@ -45,8 +45,8 @@ class UsersContainer extends React.Component {
       },
       {   Header: "OPEN ID",
         accessor: "openId",
-        className: 'columnCell tenPer',
-        headerClassName: 'columnCell tenPer'
+        className: 'columnCell fifPer',
+        headerClassName: 'columnCell fifPer'
       },
       {   Header: "昵称",
         accessor: "nickname",
@@ -60,11 +60,16 @@ class UsersContainer extends React.Component {
       },
       {   Header: "头像",
         accessor: "avatar",
-        className: 'columnCell twentyPer',
-        headerClassName: 'columnCell twentyPer',
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer',
         Cell: row => (
           row.row.avatar ? <img alt='user_pic' src={row.row.avatar}/> : <div></div>
         )
+      },
+      {   Header: "创建日期",
+        accessor: "createdAt",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
       },
     ]
     let height = screen.height * 0.77 + 'px'

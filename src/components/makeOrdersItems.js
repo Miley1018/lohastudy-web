@@ -10,7 +10,7 @@ const orderConstructor = (order) => {
     phoneNumber: order['user']['phoneNumber'],
     nickname: order['user']['nickname'],
     title: order['course']['title'],
-    createdAt: common.formatDateTime(order['createdAt'])
+    createdAt: common.formatDateTime(order['createdAt']),
     operation: ''
   };
 };

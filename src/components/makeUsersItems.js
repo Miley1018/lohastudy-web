@@ -1,3 +1,4 @@
+import common from '../utils/common'
 const userConstructor = (user, index) => {
   return {
     index: index,
@@ -8,7 +9,8 @@ const userConstructor = (user, index) => {
     phoneNumber: user['phoneNumber'],
     email: user['email'],
     avatar: user['avatar'],
-    scope: user['scope'] == 'admin' ? '管理员' : '用户'
+    scope: user['scope'] == 'admin' ? '管理员' : '用户',
+    createdAt: common.formatDateTime(user['createdAt']),
   };
 };
 
@@ -17,7 +19,12 @@ export default function makeUsersItems(users) {
   let index = 1
   for (let key in users) {
     if (users[key].scope != 'admin') {
-      usersRows.push(userConstructor(users[key], index++))
+      index++
+    }
+  }
+  for (let key in users) {
+    if (users[key].scope != 'admin') {
+      usersRows.push(userConstructor(users[key], index--))
     }
   }
   return usersRows

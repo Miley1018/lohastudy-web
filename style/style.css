@@ -108,6 +108,9 @@ a:hover {
     word-break: break-all;
     border: hidden !important;
 }
+.fivePer {
+    width:5% !important;
+}
 .tenPer {
     width:10% !important;
 }
