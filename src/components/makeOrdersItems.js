@@ -1,17 +1,16 @@
-import moment from 'moment'
+import common from '../utils/common'
 
 const orderConstructor = (order) => {
-  const courseDate = order['courseDate'] && (moment(order['courseDate']).format('YYYY/MM/DD HH:mm'))
   return {
     id: order['id'],
     status: order['status'] == 'pending' ? '预约确认中' :
       (order['status'] == 'confirmed' ? '预约成功': '预约已取消'),
-    courseDate: courseDate,
+    courseDate: common.formatDateTime(order['courseDate']),
     courseTime: order['courseTime'],
     phoneNumber: order['user']['phoneNumber'],
     nickname: order['user']['nickname'],
     title: order['course']['title'],
-    createdAt: moment(order['createdAt']).format('YYYY/MM/DD HH:mm'),
+    createdAt: common.formatDateTime(order['createdAt'])
     operation: ''
   };
 };

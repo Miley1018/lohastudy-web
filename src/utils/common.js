@@ -1,3 +1,5 @@
+import moment from "moment/moment";
+
 export default {
   keyBy: function(items, key) {
     const result = {}
@@ -5,5 +7,11 @@ export default {
       result[item[key]] = item
     })
     return result
+  },
+  formatDateTime: function(date) {
+    if (!date) {
+      return ''
+    }
+    return moment(date).format('YYYY/MM/DD HH:mm')
   }
 }
