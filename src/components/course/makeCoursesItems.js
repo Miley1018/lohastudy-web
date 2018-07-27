@@ -19,6 +19,7 @@ const courseConstructor = (course, now) => {
     id: course['id'],
     name: course['title'],
     belong: belong,
+    place: course['place'],
     pic: course['images'] && course['images'][0],
     operation: '',
     isOnline: isOnline,

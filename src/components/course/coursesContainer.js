@@ -104,10 +104,15 @@ class CoursesContainer extends React.Component {
         className: 'columnCell twentyPer',
         headerClassName: 'columnCell twentyPer'
       },
+      {   Header: "商圈",
+        accessor: "place",
+        className: 'columnCell tenPer',
+        headerClassName: 'columnCell tenPer'
+      },
       {   Header: "头图",
         accessor: "pic",
-        className: 'columnCell thirtyPer',
-        headerClassName: 'columnCell thirtyPer',
+        className: 'columnCell twentyPer',
+        headerClassName: 'columnCell twentyPer',
         Cell: row => (
           <img alt='course_pic' height={200} src={row.row.pic}/>
         )
